@@ -13,12 +13,12 @@ const (
 
 // Article definition of an article
 type Article struct {
-	Title       string
-	Description string
-	URL         string
-	Domain      string
-	Author      string
-	Type        string
-	ReadAt      *time.Time
-	FinishedAt  *time.Time
+	Title       string     `json:"title,omitempty"`
+	Description string     `json:"description,omitempty"`
+	URL         string     `json:"url,omitempty"`
+	Domain      string     `json:"domain,omitempty"`
+	Author      string     `json:"author,omitempty"`
+	Type        string     `json:"type,omitempty"`
+	ReadAt      *time.Time `json:"read_at,omitempty"`
+	FinishedAt  *time.Time `json:"finished_at,omitempty"`
 }
