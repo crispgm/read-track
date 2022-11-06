@@ -2,6 +2,8 @@ package model
 
 import (
 	"time"
+
+	"gorm.io/gorm"
 )
 
 // Read types
@@ -13,6 +15,8 @@ const (
 
 // Article definition of an article
 type Article struct {
+	gorm.Model
+
 	Title       string     `json:"title,omitempty"`
 	Description string     `json:"description,omitempty"`
 	URL         string     `json:"url,omitempty"`
@@ -20,5 +24,4 @@ type Article struct {
 	Author      string     `json:"author,omitempty"`
 	Type        string     `json:"type,omitempty"`
 	ReadAt      *time.Time `json:"read_at,omitempty"`
-	FinishedAt  *time.Time `json:"finished_at,omitempty"`
 }
