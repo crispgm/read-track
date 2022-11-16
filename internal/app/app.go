@@ -2,19 +2,34 @@ package app
 
 import (
 	"github.com/crispgm/read-track/internal/infra"
-	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-// LoadRoutes .
-func LoadRoutes(r *gin.Engine, conf *infra.Conf) {
-	api := r.Group("/api")
-	{
-		api.GET("/add", Add)
-		api.GET("/get", Get)
+// Application globals
+type Application struct {
+	path string
+
+	conf *infra.Conf
+	db   *gorm.DB
+}
+
+// Init globals
+func (app *Application) Init(confPath string) error {
+	var err error
+	app.path = confPath
+	app.conf, err = infra.LoadConf("./")
+	if err != nil {
+		return err
 	}
-	page := r.Group("/page", gin.BasicAuth(conf.HTTP.AuthUsers))
-	{
-		page.GET("/dashboard")
-		page.GET("/stats")
+	app.db, err = infra.LoadDB(app.conf.DB)
+	if err != nil {
+		return err
 	}
+
+	return nil
+}
+
+// Conf getter
+func (app Application) Conf() infra.Conf {
+	return *app.conf
 }
