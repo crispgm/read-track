@@ -2,4 +2,4 @@
 
 mkdir -p output
 go build -o output/read-track ./cmd/read-track
-./output/read-track
+./output/read-track -conf=./

@@ -16,9 +16,10 @@ type Conf struct {
 
 // HTTPConf .
 type HTTPConf struct {
-	Port      string
-	BasicAuth string
-	AuthUsers map[string]string
+	Port       string
+	BasicAuth  string
+	AuthUsers  map[string]string
+	AuthTokens map[string]string
 }
 
 // DBConf .
@@ -49,10 +50,12 @@ func LoadConf(path string) (*Conf, error) {
 	}
 	if len(conf.HTTP.BasicAuth) > 0 {
 		conf.HTTP.AuthUsers = make(map[string]string)
+		conf.HTTP.AuthTokens = make(map[string]string)
 		pairs := strings.Split(conf.HTTP.BasicAuth, ";")
 		for _, p := range pairs {
 			fields := strings.Split(p, ":")
 			conf.HTTP.AuthUsers[fields[0]] = fields[1]
+			conf.HTTP.AuthTokens[fields[2]] = fields[0]
 		}
 	}
 	if len(conf.HTTP.AuthUsers) == 0 {

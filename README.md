@@ -11,7 +11,11 @@ Personal reading list inspired by <https://www.tdpain.net/blog/a-year-of-reading
 ## Dev
 
 - Gin
-- MySQL/PlanetScale
+- MySQL
+
+## Deploy
+
+- fly.io
 
 ## License
 

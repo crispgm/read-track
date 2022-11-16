@@ -5,12 +5,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func (app Application) validTokenMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Next()
+	}
+}
+
 // LoadRoutes .
 func (app Application) LoadRoutes(r *gin.Engine, conf *infra.Conf) {
 	api := r.Group("/api")
 	{
-		api.GET("/add", Add)
-		api.GET("/get", Get)
+		api.GET("/add", app.Add)
+		api.GET("/get", app.Get)
 	}
 	page := r.Group("/page", gin.BasicAuth(conf.HTTP.AuthUsers))
 	{

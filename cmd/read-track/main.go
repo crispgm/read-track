@@ -5,7 +5,6 @@ import (
 	"flag"
 
 	"github.com/crispgm/read-track/internal/app"
-	"github.com/crispgm/read-track/internal/infra"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,15 +26,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	// load conf
-	conf, err := infra.LoadConf("./")
-	if err != nil {
-		panic(err)
-	}
+	conf := appl.Conf()
 	// register routers
 	r := gin.Default()
-	app.LoadRoutes(r)
-
+	appl.LoadRoutes(r, conf)
 	// run
 	r.Run(conf.HTTP.Port)
 }

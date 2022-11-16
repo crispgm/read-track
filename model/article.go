@@ -17,11 +17,18 @@ const (
 type Article struct {
 	gorm.Model
 
-	Title       string     `json:"title,omitempty"`
-	Description string     `json:"description,omitempty"`
-	URL         string     `json:"url,omitempty"`
-	Domain      string     `json:"domain,omitempty"`
-	Author      string     `json:"author,omitempty"`
-	Type        string     `json:"type,omitempty"`
-	ReadAt      *time.Time `json:"read_at,omitempty"`
+	Title       string     `json:"Title,omitempty"`
+	Description string     `json:"Description,omitempty"`
+	URL         string     `json:"URL,omitempty"`
+	Domain      string     `json:"Domain,omitempty"`
+	Author      string     `json:"Author,omitempty"`
+	Type        string     `json:"Type,omitempty"`
+	ReadAt      *time.Time `json:"ReadAt,omitempty"`
+}
+
+// CreateArticle .
+func CreateArticle(db *gorm.DB, a *Article) error {
+	result := db.Create(a)
+
+	return result.Error
 }
