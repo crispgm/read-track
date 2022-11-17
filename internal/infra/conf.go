@@ -10,8 +10,9 @@ import (
 
 // Conf configuration
 type Conf struct {
-	HTTP HTTPConf
-	DB   DBConf
+	HTTP  HTTPConf
+	DB    DBConf
+	Debug bool
 }
 
 // HTTPConf .
@@ -47,6 +48,7 @@ func LoadConf(path string) (*Conf, error) {
 			User:     os.Getenv("DB_USER"),
 			Pass:     os.Getenv("DB_PASS"),
 		},
+		Debug: os.Getenv("MODE") == "debug",
 	}
 	if len(conf.HTTP.BasicAuth) > 0 {
 		conf.HTTP.AuthUsers = make(map[string]string)

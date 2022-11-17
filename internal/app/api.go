@@ -1,10 +1,9 @@
 package app
 
 import (
-	"fmt"
 	"net/http"
 
-	"github.com/crispgm/read-track/model"
+	"github.com/crispgm/read-track/internal/model"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,30 +24,21 @@ func (app Application) Add(c *gin.Context) {
 
 	var params TrackParams
 	err := c.BindQuery(&params)
-	fmt.Println(err)
 	if err != nil {
-		resp.Code = -1
-		resp.Message = err.Error()
+		c.JSON(http.StatusOK, NewError(ErrCodeParams, err).Response())
 		return
 	}
 
 	article := &model.Article{
-		Title: params.Title,
-		URL:   params.URL,
-		Type:  params.Type,
+		Title:    params.Title,
+		URL:      params.URL,
+		ReadType: params.Type,
 	}
-	err = model.CreateArticle(app.db, article)
+	err = model.CreateArticle(app.DB(), article)
 	if err != nil {
-		resp.Code = -2
-		resp.Message = err.Error()
+		c.JSON(http.StatusOK, NewError(ErrCodeDBFailed, err).Response())
 		return
 	}
 	resp.Data = article
-	c.JSON(http.StatusOK, resp)
-}
-
-// Get implementation of getting articles
-func (app Application) Get(c *gin.Context) {
-	resp := NewResponse()
 	c.JSON(http.StatusOK, resp)
 }

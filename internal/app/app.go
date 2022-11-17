@@ -4,7 +4,7 @@ import (
 	"sync"
 
 	"github.com/crispgm/read-track/internal/infra"
-	"github.com/crispgm/read-track/model"
+	"github.com/crispgm/read-track/internal/model"
 	"gorm.io/gorm"
 )
 
@@ -39,6 +39,14 @@ func (app Application) Conf() *infra.Conf {
 	return app.conf
 }
 
+// DB returns DB instance
+func (app Application) DB() *gorm.DB {
+	if app.conf.Debug {
+		return app.db.Debug()
+	}
+	return app.db
+}
+
 // MigrateDB migrate gorm DB
 func (app Application) MigrateDB() error {
 	err := app.db.Set("gorm:table_options", "ENGINE=InnoDB").
@@ -48,7 +56,7 @@ func (app Application) MigrateDB() error {
 	return err
 }
 
-// IsAuthToken checks whether it's valid token
+// CheckToken checks whether it's valid token
 func (app Application) CheckToken(token string) bool {
 	app.mu.RLock()
 	defer app.mu.Unlock()
