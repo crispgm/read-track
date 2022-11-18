@@ -4,8 +4,9 @@ import "errors"
 
 // Error codes
 const (
-	ErrCodeParams   = 101
-	ErrCodeDBFailed = 102
+	ErrCodeParams = iota + 100
+	ErrCodeDBFailed
+	ErrMarshalFailed
 )
 
 // Definition of errors

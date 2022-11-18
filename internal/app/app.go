@@ -2,9 +2,11 @@ package app
 
 import (
 	"sync"
+	"time"
 
 	"github.com/crispgm/read-track/internal/infra"
 	"github.com/crispgm/read-track/internal/model"
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -15,7 +17,8 @@ type Application struct {
 	conf *infra.Conf
 	db   *gorm.DB
 
-	mu *sync.RWMutex
+	loc *time.Location
+	mu  *sync.RWMutex
 }
 
 // Init globals
@@ -31,6 +34,14 @@ func (app *Application) Init(confPath string) error {
 		return err
 	}
 	app.mu = &sync.RWMutex{}
+
+	if !app.conf.Debug {
+		gin.SetMode(gin.ReleaseMode)
+	}
+	app.loc, err = time.LoadLocation(app.conf.Timezone)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

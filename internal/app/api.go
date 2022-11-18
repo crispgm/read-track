@@ -30,9 +30,11 @@ func (app Application) Add(c *gin.Context) {
 	}
 
 	article := &model.Article{
-		Title:    params.Title,
-		URL:      params.URL,
-		ReadType: params.Type,
+		Title:       params.Title,
+		URL:         params.URL,
+		Description: params.Description,
+		Author:      params.Author,
+		ReadType:    params.Type,
 	}
 	err = model.CreateArticle(app.DB(), article)
 	if err != nil {

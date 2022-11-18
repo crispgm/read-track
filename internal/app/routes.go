@@ -16,11 +16,10 @@ func (app Application) LoadRoutes(r *gin.Engine, conf *infra.Conf) {
 	api := r.Group("/api")
 	{
 		api.GET("/add", app.Add)
-		api.GET("/get", app.Get)
 	}
 	page := r.Group("/page", gin.BasicAuth(conf.HTTP.AuthUsers))
 	{
-		page.GET("/dashboard")
-		page.GET("/stats")
+		page.GET("/export", app.Export)
+		// page.GET("/dashboard")
 	}
 }
