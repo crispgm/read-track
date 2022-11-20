@@ -7,6 +7,7 @@ javascript:(() => {
 
   const pageTitle = document.title;
   const pageURL = window.location.href;
+  let metaAuthor = "";
   let metaImage = "";
   let metaDescription = "";
 
@@ -35,6 +36,13 @@ javascript:(() => {
   }
 
   {
+    const author = getMetaValue("author");
+    if (author !== undefined) {
+      metaAuthor = author;
+    }
+  }
+
+  {
     let desc = getMetaValue("og:description");
     if (desc !== undefined) {
       metaDescription = desc;
@@ -53,13 +61,14 @@ javascript:(() => {
     }
   }
 
-  console.log("BOOKMARKET PRESSED:", pageTitle, pageURL, metaDescription, metaImage);
+  console.log("BOOKMARKET PRESSED:", pageTitle, pageURL, metaAuthor, metaDescription, metaImage);
 
   const url = new URL(requestURL);
   const searchParams = url.searchParams;
   searchParams.set("title", pageTitle);
   searchParams.set("url", pageURL);
   searchParams.set("type", opType);
+  searchParams.set("author", metaAuthor);
   searchParams.set("description", metaDescription);
   searchParams.set("image", metaImage);
   searchParams.set("token", token);
