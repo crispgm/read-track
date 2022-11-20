@@ -8,14 +8,14 @@ Personal reading list inspired by <https://www.tdpain.net/blog/a-year-of-reading
 - Admin Pages for Statistics and Token Management
 - Static Site Generation
 
-## Dev
+## Setup
 
-- Gin
-- MySQL
+1. Setup `.env` according to `.env.example`.
+2. `script/run.sh`
 
 ## Deploy
 
-- fly.io
+### Deploy with fly.io
 
 ## License
 

@@ -35,7 +35,7 @@ func (app *Application) Init(confPath string) error {
 	}
 	app.mu = &sync.RWMutex{}
 
-	if !app.conf.Debug {
+	if !app.conf.IsDev() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	app.loc, err = time.LoadLocation(app.conf.Timezone)
@@ -52,18 +52,17 @@ func (app Application) Conf() *infra.Conf {
 
 // DB returns DB instance
 func (app Application) DB() *gorm.DB {
-	if app.conf.Debug {
+	if app.conf.IsDev() {
 		return app.db.Debug()
 	}
 	return app.db
 }
 
-// MigrateDB migrate gorm DB
-func (app Application) MigrateDB() error {
-	err := app.db.Set("gorm:table_options", "ENGINE=InnoDB").
-		AutoMigrate(
-			&model.Article{},
-		)
+// AutoMigrate migrate gorm DB
+func (app Application) AutoMigrate() error {
+	err := app.db.AutoMigrate(
+		&model.Article{},
+	)
 	return err
 }
 

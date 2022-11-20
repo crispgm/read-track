@@ -1,9 +1,7 @@
 package infra
 
 import (
-	"fmt"
-
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
@@ -15,13 +13,9 @@ func LoadDB(dbconf DBConf) (*gorm.DB, error) {
 		err error
 	)
 
-	dsn = fmt.Sprintf(
-		"%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		dbconf.User,
-		dbconf.Pass,
-		dbconf.Host,
-		dbconf.Name,
-	)
-	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if dbconf.Provider == "sqlite" {
+		dsn = dbconf.Name
+	}
+	db, err = gorm.Open(sqlite.Open(dsn), &gorm.Config{})
 	return db, err
 }

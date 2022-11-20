@@ -16,3 +16,5 @@ coverage.txt
 # vendor/
 output/
 .env
+
+*.db

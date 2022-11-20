@@ -9,10 +9,7 @@ import (
 func TestLoadDB(t *testing.T) {
 	db, err := LoadDB(DBConf{
 		Provider: "mysql",
-		Host:     "127.0.0.1:3306",
-		Name:     "read_track_dev",
-		User:     "root",
-		Pass:     "",
+		Name:     "read_track_dev.db",
 	})
 	if assert.NoError(t, err) {
 		assert.NotNil(t, db)

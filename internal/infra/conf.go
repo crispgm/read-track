@@ -13,7 +13,7 @@ type Conf struct {
 	HTTP     HTTPConf
 	DB       DBConf
 	Timezone string
-	Debug    bool
+	Mode     string
 }
 
 // HTTPConf .
@@ -49,7 +49,7 @@ func LoadConf(path string) (*Conf, error) {
 			User:     os.Getenv("DB_USER"),
 			Pass:     os.Getenv("DB_PASS"),
 		},
-		Debug:    os.Getenv("MODE") == "debug",
+		Mode:     os.Getenv("MODE"),
 		Timezone: os.Getenv("TIMEZONE"),
 	}
 	if len(conf.HTTP.BasicAuth) > 0 {
@@ -66,4 +66,19 @@ func LoadConf(path string) (*Conf, error) {
 		return nil, errors.New("No basic auth users")
 	}
 	return &conf, nil
+}
+
+// IsDev .
+func (c Conf) IsDev() bool {
+	return c.Mode == "dev"
+}
+
+// IsTesting .
+func (c Conf) IsTesting() bool {
+	return c.Mode == "testing"
+}
+
+// IsProduction .
+func (c Conf) IsProduction() bool {
+	return c.Mode == "production"
 }

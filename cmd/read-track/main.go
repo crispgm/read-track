@@ -27,6 +27,8 @@ func main() {
 		panic(err)
 	}
 	conf := appl.Conf()
+	// auto migrate
+	appl.AutoMigrate()
 	// register routers
 	r := gin.Default()
 	appl.LoadRoutes(r, conf)
