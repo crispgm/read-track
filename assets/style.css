@@ -1,0 +1,90 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  height: 100%;
+  width: 100%;
+}
+
+@media screen and (max-width: 640px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media screen and (min-width: 1900px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+body {
+  background-color: #f8f9fa;
+  color: #212529;
+  font-family: 'Fira Sans', 'Segoe UI', Roboto, Helvetica, Arial,
+    'source-han-sans-simplified-c', 'Hiragino Sans GB', 'Microsoft Yahei',
+    sans-serif;
+  font-size: 1rem;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+a {
+  color: #5e81ac;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.wrapper {
+  margin: 0 auto;
+  max-width: 1024px;
+  padding: 0;
+}
+
+.content {
+  text-align: center;
+  width: 100%;
+}
+
+.content-wrapper {
+  padding: 1.2rem 1.2rem 0;
+}
+
+@media screen and (min-width: 1900px) {
+  .wrapper {
+    width: 56rem;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .wrapper {
+    display: block;
+    width: 100%;
+  }
+  .content-wrapper {
+    padding: 0.8rem;
+    width: 100%;
+  }
+}
+
+img {
+  border: 0;
+  max-width: 100%;
+}
+
+@media screen and (max-width: 640px) {
+  img {
+    max-width: 100%;
+  }
+}
