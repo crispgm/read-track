@@ -1,8 +1,9 @@
 javascript:(() => {
-  // based on: <https://gist.github.com/codemicro/f7d4d4b687c3ec2e7186ef7efecfcc35>
-  const requestURL = "http://127.0.0.1:8080/api/add";
+  /* based on: <https://gist.github.com/codemicro/f7d4d4b687c3ec2e7186ef7efecfcc35> */
+  const hostname = "http://127.0.0.1:8080";
   const token = "093idh3A7HGBx_1";
-  const opType = "read"; // skim or skip
+  const requestURL = `${hostname}/api/add`;
+  const opType = "read"; /* skim or skip */
 
   const pageTitle = document.title;
   const pageURL = window.location.href;
