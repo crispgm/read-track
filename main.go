@@ -2,6 +2,7 @@
 package main
 
 import (
+	"embed"
 	"flag"
 
 	"github.com/crispgm/read-track/internal/app"
@@ -15,6 +16,9 @@ var (
 	port        = ":80"
 	defaultPath = "./"
 )
+
+//go:embed assets/* templates/*
+var resources embed.FS
 
 func main() {
 	flag.StringVar(&path, "conf", defaultPath, "Conf Path")
@@ -31,7 +35,7 @@ func main() {
 	appl.AutoMigrate()
 	// register routers
 	r := gin.Default()
-	appl.LoadRoutes(r, conf)
+	appl.LoadRoutes(r, conf, &resources)
 	// run
 	r.Run(conf.HTTP.Port)
 }
