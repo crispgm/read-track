@@ -46,6 +46,16 @@ a:hover {
   text-decoration: underline;
 }
 
+pre,
+code {
+  font-family: 'Fira Mono', Menlo, Monaco, Consolas, Courier, monospace;
+  hyphens: none;
+}
+
+pre.highlight {
+  font-size: 0.9rem;
+}
+
 .wrapper {
   margin: 0 auto;
   max-width: 800px;

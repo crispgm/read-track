@@ -5,9 +5,13 @@
     <meta charset="UTF-8">
     <meta name="description" content="Personal reading list"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans|Fira+Mono&display=swap">
     <link rel="stylesheet" href="/public/static/css/style.css">
     <link rel="icon" type="image/x-icon" href="/public/static/image/logo.png">
+    {% if highlight %}
+    <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.6.0/styles/nord.min.css">
+    <script src="https://unpkg.com/@highlightjs/cdn-assets@11.6.0/highlight.min.js"></script>
+    {% endif %}
   </head>
   <body>
     <main>
@@ -15,6 +19,12 @@
         <nav class="menu">
           <span class="menu-item{% if path == "/index" %} menu-active{% endif %}">
             <a href="/">Home</a>
+          </span>
+          <span class="menu-item">
+            <a href="/">Doc</a>
+          </span>
+          <span class="menu-item{% if path == "/page/setup" %} menu-active{% endif %}">
+            <a href="/page/setup">Setup</a>
           </span>
           <span class="menu-item{% if path == "/page/dashboard" %} menu-active{% endif %}">
             <a href="/page/dashboard">Dashboard</a>
@@ -26,5 +36,8 @@
         </div>
       </div>
     </main>
+    {% if highlight %}
+    <script>hljs.highlightAll();</script>
+    {% endif %}
   </body>
 </html>
