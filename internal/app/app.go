@@ -81,18 +81,17 @@ func (app Application) CheckToken(token string) bool {
 	return false
 }
 
+func (app Application) getTemplate(template string) ([]byte, error) {
+	if app.conf.IsDev() {
+		return os.ReadFile(fmt.Sprintf("%s/templates/%s", app.path, template))
+	}
+	return app.fs.ReadFile(fmt.Sprintf("templates/%s", template))
+}
+
 // RenderHTML with Liquid
 func (app Application) RenderHTML(c *gin.Context, template string, bindings liquid.Bindings) error {
-	var (
-		engine = liquid.NewEngine()
-		tpl    []byte
-		err    error
-	)
-	if app.conf.IsDev() {
-		tpl, err = os.ReadFile(fmt.Sprintf("%s/templates/%s", app.path, template))
-	} else {
-		tpl, err = app.fs.ReadFile(fmt.Sprintf("templates/%s", template))
-	}
+	engine := liquid.NewEngine()
+	tpl, err := app.getTemplate(template)
 	if err != nil {
 		log.Fatalln(err)
 		return err
@@ -104,7 +103,7 @@ func (app Application) RenderHTML(c *gin.Context, template string, bindings liqu
 	}
 	if layout, ok := bindings["layout"]; ok {
 		if layoutName, ok := layout.(string); ok {
-			layoutTpl, err := os.ReadFile(fmt.Sprintf("%s/templates/layout/%s.liquid", app.path, layoutName))
+			layoutTpl, err := app.getTemplate(fmt.Sprintf("layout/%s.liquid", layoutName))
 			if err != nil {
 				log.Fatalln(err)
 				return err
