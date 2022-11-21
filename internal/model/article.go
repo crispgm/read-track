@@ -75,3 +75,63 @@ func ExportArticles(db *gorm.DB, loc *time.Location, year, month int) ([]Article
 	err := db.Where("created_at BETWEEN (? AND ?) AND status = ?", fromTime, toTime, StatusOK).Find(&articles).Error
 	return articles, err
 }
+
+// ArticleStat .
+type ArticleStat struct {
+	Name string
+	All  int64
+	Read int64
+	Skim int64
+	Skip int64
+}
+
+// ArticleStatResult .
+type ArticleStatResult struct {
+	ReadType  string
+	ReadCount int64
+}
+
+// GetArticleStatistics .
+func GetArticleStatistics(db *gorm.DB, loc *time.Location) ([]ArticleStat, error) {
+	now := time.Now()
+	year, month, day := now.Year(), now.Month(), now.Day()
+	var fromTime, toTime time.Time
+
+	// today
+	fromTime = time.Date(year, time.Month(month), day, 0, 0, 0, 0, loc)
+	toTime = fromTime.AddDate(0, 0, 1).Add(time.Second * -1)
+	today, err := getArticleStatistics(db, "Today", fromTime, toTime)
+
+	// this month
+	fromTime = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, loc)
+	toTime = fromTime.AddDate(0, 1, 0).Add(time.Second * -1)
+	thisMonth, err := getArticleStatistics(db, "This Month", fromTime, toTime)
+
+	stats := []ArticleStat{today, thisMonth}
+	return stats, err
+}
+
+func getArticleStatistics(db *gorm.DB, name string, fromTime, toTime time.Time) (ArticleStat, error) {
+	var result []ArticleStatResult
+	err := db.
+		Table("Articles").
+		Select("read_type", "count(id) AS read_count").
+		Where("created_at BETWEEN (? AND ?) AND status = ?", fromTime, toTime, StatusOK).
+		Group("read_type").
+		Scan(&result).
+		Error
+
+	var stat ArticleStat
+	stat.Name = name
+	for _, item := range result {
+		stat.All += item.ReadCount
+		if item.ReadType == RTRead {
+			stat.Read = item.ReadCount
+		} else if item.ReadType == RTSkim {
+			stat.Skim = item.ReadCount
+		} else if item.ReadType == RTSkip {
+			stat.Skip = item.ReadCount
+		}
+	}
+	return stat, err
+}
