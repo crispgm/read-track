@@ -11,10 +11,18 @@ import (
 
 // LoadRoutes .
 func (app Application) LoadRoutes(r *gin.Engine, conf *infra.Conf, resources *embed.FS) {
-	tpl := template.Must(template.New("").ParseFS(resources, "templates/index.tmpl"))
-	r.SetHTMLTemplate(tpl)
-	// example: /public/assets/images/example.png
-	r.StaticFS("/public", http.FS(resources))
+	var tpl *template.Template
+	var fs http.FileSystem
+	if conf.IsDev() {
+		r.LoadHTMLGlob("templates/*.tmpl")
+		fs = http.Dir("static")
+		r.StaticFS("/public/static", fs)
+	} else {
+		tpl = template.Must(template.New("").ParseFS(resources, "templates/*.tmpl"))
+		r.SetHTMLTemplate(tpl)
+		fs = http.FS(resources)
+		r.StaticFS("/public", fs)
+	}
 
 	r.GET("/", app.Index)
 
@@ -25,7 +33,7 @@ func (app Application) LoadRoutes(r *gin.Engine, conf *infra.Conf, resources *em
 	page := r.Group("/page", gin.BasicAuth(conf.HTTP.AuthUsers))
 	{
 		page.GET("/export", app.Export)
-		// page.GET("/dashboard")
+		page.GET("/dashboard", app.Dashboard)
 	}
 }
 

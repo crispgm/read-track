@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dashboard - Read Track</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="Personal reading list"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans&display=swap">
+    <link rel="stylesheet" href="/public/static/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/public/static/image/logo.png">
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="content-wrapper">
+        <h1>Dashboard</h1>
+        <div class="article">
+          <!---<h2>Token</h2>--->
+          <h2>Statistics</h2>
+          {{ if eq (len .error) 0 }}
+            {{ range .data }}
+          <h3>{{ .Name }}</h3>
+          <div class="stat">
+            <div class="stat-item">
+              <div class="stat-title">All</div>
+              <div class="stat-data">
+                {{ .All }}
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-title">Read</div>
+              <div class="stat-data">
+                {{ .Read }}
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-title">Skim</div>
+              <div class="stat-data">
+                {{ .Skim }}
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-title">Skip</div>
+              <div class="stat-data">
+                {{ .Skip }}
+              </div>
+            </div>
+          </div>
+            {{ end }}
+          {{ else }}
+            {{ .errMsg }}
+          {{ end }}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

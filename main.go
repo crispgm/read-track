@@ -17,7 +17,7 @@ var (
 	defaultPath = "./"
 )
 
-//go:embed assets/* templates/*
+//go:embed static/* templates/*
 var resources embed.FS
 
 func main() {

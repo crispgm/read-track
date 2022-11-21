@@ -22,7 +22,7 @@ html {
 
 body {
   background-color: #f8f9fa;
-  color: #212529;
+  color: #0b7285;
   font-family: 'Fira Sans', 'Segoe UI', Roboto, Helvetica, Arial,
     'source-han-sans-simplified-c', 'Hiragino Sans GB', 'Microsoft Yahei',
     sans-serif;
@@ -37,9 +37,9 @@ body {
 }
 
 a {
-  color: #5e81ac;
+  color: inherit;
   font-weight: 400;
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 a:hover {
@@ -92,4 +92,32 @@ img {
 .article {
   margin-bottom: 2rem;
   text-align: left;
+}
+
+.stat {
+  display: flex;
+  font-size: 1rem;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding: 0.8rem 1.2rem 0;
+  text-align: left;
+}
+
+.stat-item {
+  margin: 0 1rem;
+  text-align: center;
+}
+
+.stat-item:first-of-type {
+  margin-left: 0;
+}
+
+.stat-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.stat-data {
+  font-size: 1rem;
+  margin: 0.8rem 0 0;
 }
