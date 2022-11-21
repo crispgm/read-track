@@ -12,9 +12,5 @@ func (app Application) Index(c *gin.Context) {
 		"path":      "/index",
 		"title":     "Home",
 		"pageTitle": "Welcome to Read Track",
-
-		"instance": app.conf.Instance,
-		"timezone": app.conf.Timezone,
-		"username": app.conf.HTTP.AuthUser.Name,
 	})
 }

@@ -18,7 +18,12 @@ func (app Application) Dashboard(c *gin.Context) {
 		"path":      "/page/dashboard",
 		"title":     "Dashboard",
 		"pageTitle": "Dashboard",
-		"error":     errMsg,
-		"stats":     stats,
+
+		"instance": app.conf.Instance,
+		"timezone": app.conf.Timezone,
+		"username": app.conf.HTTP.AuthUser.Name,
+
+		"error": errMsg,
+		"stats": stats,
 	})
 }
