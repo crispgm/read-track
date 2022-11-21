@@ -26,7 +26,7 @@ func main() {
 
 	var appl app.Application
 	var err error
-	err = appl.Init(path)
+	err = appl.Init(path, &resources)
 	if err != nil {
 		panic(err)
 	}
@@ -35,7 +35,7 @@ func main() {
 	appl.AutoMigrate()
 	// register routers
 	r := gin.Default()
-	appl.LoadRoutes(r, conf, &resources)
+	appl.LoadRoutes(r, conf)
 	// run
 	r.Run(conf.HTTP.Port)
 }

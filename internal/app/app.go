@@ -1,11 +1,11 @@
 package app
 
 import (
+	"embed"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"sync"
 	"time"
 
 	"github.com/crispgm/read-track/internal/infra"
@@ -22,12 +22,12 @@ type Application struct {
 	conf *infra.Conf
 	db   *gorm.DB
 
+	fs  *embed.FS
 	loc *time.Location
-	mu  *sync.RWMutex
 }
 
 // Init globals
-func (app *Application) Init(confPath string) error {
+func (app *Application) Init(confPath string, fs *embed.FS) error {
 	var err error
 	app.path = confPath
 	app.conf, err = infra.LoadConf(confPath)
@@ -38,14 +38,15 @@ func (app *Application) Init(confPath string) error {
 	if err != nil {
 		return err
 	}
-	app.mu = &sync.RWMutex{}
 
-	if !app.conf.IsDev() {
-		gin.SetMode(gin.ReleaseMode)
-	}
+	app.fs = fs
 	app.loc, err = time.LoadLocation(app.conf.Timezone)
 	if err != nil {
 		return err
+	}
+
+	if !app.conf.IsDev() {
+		gin.SetMode(gin.ReleaseMode)
 	}
 	return nil
 }
@@ -82,8 +83,16 @@ func (app Application) CheckToken(token string) bool {
 
 // RenderHTML with Liquid
 func (app Application) RenderHTML(c *gin.Context, template string, bindings liquid.Bindings) error {
-	engine := liquid.NewEngine()
-	tpl, err := os.ReadFile(fmt.Sprintf("%s/templates/%s", app.path, template))
+	var (
+		engine = liquid.NewEngine()
+		tpl    []byte
+		err    error
+	)
+	if app.conf.IsDev() {
+		tpl, err = os.ReadFile(fmt.Sprintf("%s/templates/%s", app.path, template))
+	} else {
+		tpl, err = app.fs.ReadFile(fmt.Sprintf("templates/%s", template))
+	}
 	if err != nil {
 		log.Fatalln(err)
 		return err

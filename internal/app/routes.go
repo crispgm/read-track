@@ -1,7 +1,6 @@
 package app
 
 import (
-	"embed"
 	"net/http"
 
 	"github.com/crispgm/read-track/internal/infra"
@@ -9,14 +8,11 @@ import (
 )
 
 // LoadRoutes .
-func (app Application) LoadRoutes(r *gin.Engine, conf *infra.Conf, resources *embed.FS) {
-	var fs http.FileSystem
+func (app Application) LoadRoutes(r *gin.Engine, conf *infra.Conf) {
 	if conf.IsDev() {
-		fs = http.Dir("static")
-		r.StaticFS("/public/static", fs)
+		r.StaticFS("/public/static", http.Dir("static"))
 	} else {
-		fs = http.FS(resources)
-		r.StaticFS("/public", fs)
+		r.StaticFS("/public", http.FS(app.fs))
 	}
 
 	r.GET("/", app.Index)
