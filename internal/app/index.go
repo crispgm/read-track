@@ -1,12 +1,16 @@
 package app
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"github.com/osteele/liquid"
 )
 
 // Index .
 func (app Application) Index(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{})
+	app.RenderHTML(c, "index.liquid", liquid.Bindings{
+		"layout":    "page",
+		"path":      "/index",
+		"title":     "Home",
+		"pageTitle": "Welcome to Read Track",
+	})
 }

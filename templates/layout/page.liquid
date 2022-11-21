@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Read Track</title>
+    <title>{{ title }} - Read Track</title>
     <meta charset="UTF-8">
     <meta name="description" content="Personal reading list"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,24 +10,21 @@
     <link rel="icon" type="image/x-icon" href="/public/static/image/logo.png">
   </head>
   <body>
-    <div class="wrapper">
-      <div class="content-wrapper">
-        <h1>Welcome to Read Track</h1>
+    <main>
+      <div class="wrapper">
+        <nav class="menu">
+          <span class="menu-item{% if path == "/index" %} menu-active{% endif %}">
+            <a href="/">Home</a>
+          </span>
+          <span class="menu-item{% if path == "/page/dashboard" %} menu-active{% endif %}">
+            <a href="/page/dashboard">Dashboard</a>
+          </span>
+        </nav>
+        <h1>{{ pageTitle }}</h1>
         <div class="article">
-          <h2>User Manual</h2>
-          <h2>About</h2>
-          <p>
-            Copyright &copy; David Zhang.
-          </p>
-          <p>
-            Powered by <a href="https://fly.io/">fly.io</a>.
-          </p>
-          <h3>Credit</h3>
-          <p>
-            <a href="https://yeun.github.io/open-color/">Open Color</a> Version 1.9.1. MIT License.
-          </p>
+            {{ content }}
         </div>
       </div>
-    </div>
+    </main>
   </body>
 </html>

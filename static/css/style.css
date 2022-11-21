@@ -52,15 +52,6 @@ a:hover {
   padding: 0;
 }
 
-.content {
-  text-align: center;
-  width: 100%;
-}
-
-.content-wrapper {
-  padding: 1.2rem 1.2rem 0;
-}
-
 @media screen and (min-width: 1900px) {
   .wrapper {
     width: 56rem;
@@ -70,9 +61,6 @@ a:hover {
 @media screen and (max-width: 640px) {
   .wrapper {
     display: block;
-    width: 100%;
-  }
-  .content-wrapper {
     padding: 0.8rem;
     width: 100%;
   }
@@ -87,6 +75,25 @@ img {
   img {
     max-width: 100%;
   }
+}
+
+.menu {
+  margin-top: 0.8rem;
+  text-align: left;
+}
+
+.menu-item {
+  border-left: 1px solid;
+  padding: 0 0.4rem;
+}
+
+.menu-active > a {
+  text-decoration: none;
+}
+
+.menu-item:first-of-type {
+  border: 0;
+  padding: 0;
 }
 
 .article {

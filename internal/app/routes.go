@@ -2,7 +2,6 @@ package app
 
 import (
 	"embed"
-	"html/template"
 	"net/http"
 
 	"github.com/crispgm/read-track/internal/infra"
@@ -11,15 +10,11 @@ import (
 
 // LoadRoutes .
 func (app Application) LoadRoutes(r *gin.Engine, conf *infra.Conf, resources *embed.FS) {
-	var tpl *template.Template
 	var fs http.FileSystem
 	if conf.IsDev() {
-		r.LoadHTMLGlob("templates/*.tmpl")
 		fs = http.Dir("static")
 		r.StaticFS("/public/static", fs)
 	} else {
-		tpl = template.Must(template.New("").ParseFS(resources, "templates/*.tmpl"))
-		r.SetHTMLTemplate(tpl)
 		fs = http.FS(resources)
 		r.StaticFS("/public", fs)
 	}
