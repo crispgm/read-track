@@ -48,7 +48,7 @@ a:hover {
 
 .wrapper {
   margin: 0 auto;
-  max-width: 1024px;
+  max-width: 800px;
   padding: 0;
 }
 
@@ -87,4 +87,9 @@ img {
   img {
     max-width: 100%;
   }
+}
+
+.article {
+  margin-bottom: 2rem;
+  text-align: left;
 }
