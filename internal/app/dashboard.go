@@ -1,10 +1,9 @@
 package app
 
 import (
-	"net/http"
-
 	"github.com/crispgm/read-track/internal/model"
 	"github.com/gin-gonic/gin"
+	"github.com/osteele/liquid"
 )
 
 // Dashboard .
@@ -14,8 +13,12 @@ func (app Application) Dashboard(c *gin.Context) {
 	if err != nil {
 		errMsg = err.Error()
 	}
-	c.HTML(http.StatusOK, "dashboard.tmpl", gin.H{
-		"error": errMsg,
-		"data":  stats,
+	app.RenderHTML(c, "dashboard.liquid", liquid.Bindings{
+		"layout":    "page",
+		"path":      "/page/dashboard",
+		"title":     "Dashboard",
+		"pageTitle": "Dashboard",
+		"error":     errMsg,
+		"stats":     stats,
 	})
 }

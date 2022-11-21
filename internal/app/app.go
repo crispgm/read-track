@@ -1,12 +1,17 @@
 package app
 
 import (
+	"fmt"
+	"log"
+	"net/http"
+	"os"
 	"sync"
 	"time"
 
 	"github.com/crispgm/read-track/internal/infra"
 	"github.com/crispgm/read-track/internal/model"
 	"github.com/gin-gonic/gin"
+	"github.com/osteele/liquid"
 	"gorm.io/gorm"
 )
 
@@ -75,4 +80,38 @@ func (app Application) CheckToken(token string) bool {
 	}
 
 	return false
+}
+
+// RenderHTML with Liquid
+func (app Application) RenderHTML(c *gin.Context, template string, bindings liquid.Bindings) error {
+	engine := liquid.NewEngine()
+	tpl, err := os.ReadFile(fmt.Sprintf("%s/templates/%s", app.path, template))
+	if err != nil {
+		log.Fatalln(err)
+		return err
+	}
+	content, err := engine.ParseAndRender(tpl, bindings)
+	if err != nil {
+		log.Fatalln(err)
+		return err
+	}
+	if layout, ok := bindings["layout"]; ok {
+		if layoutName, ok := layout.(string); ok {
+			layoutTpl, err := os.ReadFile(fmt.Sprintf("%s/templates/layout/%s.liquid", app.path, layoutName))
+			if err != nil {
+				log.Fatalln(err)
+				return err
+			}
+			bindings["content"] = content
+			contentWithLayout, err := engine.ParseAndRender(layoutTpl, bindings)
+			if err != nil {
+				log.Fatalln(err)
+				return err
+			}
+			c.Data(http.StatusOK, "text/html; charset=utf-8", contentWithLayout)
+			return err
+		}
+	}
+	c.Data(http.StatusOK, "text/html; charset=utf-8", content)
+	return err
 }
