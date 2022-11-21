@@ -1,9 +1,32 @@
+<h2 id="iOS">iOS</h2>
+<p>Coming soon.</p>
+<h2 id="Bookmarklet">Bookmarklet</h2>
+<p>
+  You may add the following bookmarklet to your browser. Chrome and Brave are
+  tested. This is based on
+  <a
+    href="https://gist.github.com/codemicro/f7d4d4b687c3ec2e7186ef7efecfcc35"
+    target="_blank"
+    >https://gist.github.com/codemicro/f7d4d4b687c3ec2e7186ef7efecfcc35</a
+  >.
+</p>
+<p>
+  Read Type:
+  <select>
+    <option>Read</option>
+    <option>Skim</option>
+    <option>Skip</option>
+  </select>
+</p>
+<p>
+  Enable HTTPS: <input type="checkbox" checked />
+</p>
+<pre class="highlight">
+  <code class="hljs">
 javascript:(() => {
-  /* based on: <https://gist.github.com/codemicro/f7d4d4b687c3ec2e7186ef7efecfcc35> */
-  const hostname = "http://127.0.0.1:8080";
-  const token = "093idh3A7HGBx_1";
-  const requestURL = `${hostname}/api/add`;
-  const opType = "read"; /* skim or skip */
+  const token = "{{ token }}";
+  const requestURL = `{{ hostname }}/api/add`;
+  const opType = "read";
 
   const pageTitle = document.title;
   const pageURL = window.location.href;
@@ -61,8 +84,6 @@ javascript:(() => {
     }
   }
 
-  console.log("BOOKMARKET PRESSED:", pageTitle, pageURL, metaAuthor, metaDescription, metaImage);
-
   const url = new URL(requestURL);
   const searchParams = url.searchParams;
   searchParams.set("title", pageTitle);
@@ -75,3 +96,5 @@ javascript:(() => {
 
   window.location.href = url;
 })();
+  </code>
+</pre>
