@@ -5,23 +5,32 @@ import (
 	"os"
 	"strings"
 
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
 // Conf configuration
 type Conf struct {
-	HTTP     HTTPConf
-	DB       DBConf
+	HTTP HTTPConf
+	DB   DBConf
+
 	Timezone string
 	Mode     string
+	Instance string
 }
 
 // HTTPConf .
 type HTTPConf struct {
-	Port       string
-	BasicAuth  string
-	AuthUsers  map[string]string
-	AuthTokens map[string]string
+	Port      string
+	BasicAuth string
+	AuthUser  AuthUser
+}
+
+// AuthUser .
+type AuthUser struct {
+	Name     string
+	Password string
+	Token    string
 }
 
 // DBConf .
@@ -49,23 +58,27 @@ func LoadConf(path string) (*Conf, error) {
 			User:     os.Getenv("DB_USER"),
 			Pass:     os.Getenv("DB_PASS"),
 		},
+
+		Instance: os.Getenv("INSTANCE"),
 		Mode:     os.Getenv("MODE"),
 		Timezone: os.Getenv("TIMEZONE"),
 	}
 	if len(conf.HTTP.BasicAuth) > 0 {
-		conf.HTTP.AuthUsers = make(map[string]string)
-		conf.HTTP.AuthTokens = make(map[string]string)
-		pairs := strings.Split(conf.HTTP.BasicAuth, ";")
-		for _, p := range pairs {
-			fields := strings.Split(p, ":")
-			conf.HTTP.AuthUsers[fields[0]] = fields[1]
-			conf.HTTP.AuthTokens[fields[2]] = fields[0]
-		}
-	}
-	if len(conf.HTTP.AuthUsers) == 0 {
+		fields := strings.Split(conf.HTTP.BasicAuth, ":")
+		conf.HTTP.AuthUser.Name = fields[0]
+		conf.HTTP.AuthUser.Password = fields[1]
+		conf.HTTP.AuthUser.Token = fields[2]
+	} else {
 		return nil, errors.New("No basic auth users")
 	}
 	return &conf, nil
+}
+
+// AuthAccounts .
+func (c Conf) AuthAccounts() gin.Accounts {
+	return map[string]string{
+		c.HTTP.AuthUser.Name: c.HTTP.AuthUser.Password,
+	}
 }
 
 // IsDev .

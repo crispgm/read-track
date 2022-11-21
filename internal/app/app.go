@@ -73,9 +73,7 @@ func (app Application) AutoMigrate() error {
 
 // CheckToken checks whether it's valid token
 func (app Application) CheckToken(token string) bool {
-	app.mu.RLock()
-	defer app.mu.Unlock()
-	if _, ok := app.conf.HTTP.AuthTokens[token]; ok {
+	if token == app.conf.HTTP.AuthUser.Token {
 		return true
 	}
 
