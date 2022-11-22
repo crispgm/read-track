@@ -1,7 +1,6 @@
 package app
 
 import (
-	"embed"
 	"fmt"
 	"log"
 	"net/http"
@@ -22,15 +21,14 @@ type Application struct {
 	conf *infra.Conf
 	db   *gorm.DB
 
-	fs  *embed.FS
 	loc *time.Location
 }
 
 // Init globals
-func (app *Application) Init(confPath string, fs *embed.FS) error {
+func (app *Application) Init(workingPath string) error {
 	var err error
-	app.path = confPath
-	app.conf, err = infra.LoadConf(confPath)
+	app.path = workingPath
+	app.conf, err = infra.LoadConf(workingPath)
 	if err != nil {
 		return err
 	}
@@ -39,7 +37,6 @@ func (app *Application) Init(confPath string, fs *embed.FS) error {
 		return err
 	}
 
-	app.fs = fs
 	app.loc, err = time.LoadLocation(app.conf.Timezone)
 	if err != nil {
 		return err
@@ -82,10 +79,7 @@ func (app Application) CheckToken(token string) bool {
 }
 
 func (app Application) getTemplate(template string) ([]byte, error) {
-	if app.conf.IsDev() {
-		return os.ReadFile(fmt.Sprintf("%s/templates/%s", app.path, template))
-	}
-	return app.fs.ReadFile(fmt.Sprintf("templates/%s", template))
+	return os.ReadFile(fmt.Sprintf("%s/templates/%s", app.path, template))
 }
 
 // RenderHTML with Liquid

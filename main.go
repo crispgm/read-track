@@ -2,7 +2,6 @@
 package main
 
 import (
-	"embed"
 	"flag"
 
 	"github.com/crispgm/read-track/internal/app"
@@ -17,16 +16,13 @@ var (
 	defaultPath = "./"
 )
 
-//go:embed static/* templates/*
-var resources embed.FS
-
 func main() {
-	flag.StringVar(&path, "conf", defaultPath, "Conf Path")
+	flag.StringVar(&path, "working-path", defaultPath, "Working Path")
 	flag.Parse()
 
 	var appl app.Application
 	var err error
-	err = appl.Init(path, &resources)
+	err = appl.Init(path)
 	if err != nil {
 		panic(err)
 	}

@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/crispgm/read-track/internal/infra"
@@ -9,11 +10,7 @@ import (
 
 // LoadRoutes .
 func (app Application) LoadRoutes(r *gin.Engine, conf *infra.Conf) {
-	if conf.IsDev() {
-		r.StaticFS("/public/static", http.Dir("static"))
-	} else {
-		r.StaticFS("/public", http.FS(app.fs))
-	}
+	r.StaticFS("/public/static", http.Dir(fmt.Sprintf("%s/%s", app.path, "static")))
 
 	r.GET("/", app.Index)
 
@@ -21,6 +18,7 @@ func (app Application) LoadRoutes(r *gin.Engine, conf *infra.Conf) {
 	{
 		api.GET("/add", app.Add)
 	}
+
 	page := r.Group("/page", gin.BasicAuth(conf.AuthAccounts()))
 	{
 		page.GET("/export", app.Export)

@@ -1,19 +1,15 @@
-FROM flyio/litefs:0.2 AS litefs
-
 FROM golang:1.19 AS builder
 WORKDIR /src/read-track
 COPY . .
 RUN go build -ldflags "-s -w -extldflags '-static'" -tags osusergo,netgo -o /usr/local/bin/read-track .
 
 FROM alpine
-
-COPY --from=builder /usr/local/bin/read-track /usr/local/bin/read-track
-COPY --from=litefs /usr/local/bin/litefs /usr/local/bin/litefs
-
-ADD etc/litefs.yml /etc/litefs.yml
-
 RUN apk add bash curl fuse sqlite tzdata
 
-RUN mkdir -p /data /mnt/data
+COPY --from=builder /usr/local/bin/read-track /usr/local/bin/read-track
 
-ENTRYPOINT "litefs"
+RUN mkdir -p /app
+COPY --from=builder /src/read-track/templates /app/templates
+COPY --from=builder /src/read-track/static /app/static
+
+ENTRYPOINT ["read-track", "-working-path=/app"]

@@ -3,4 +3,4 @@
 set -e
 mkdir -p output
 go build -o output/read-track .
-./output/read-track -conf=./
+./output/read-track -working-path=./
