@@ -5,6 +5,7 @@ RUN go build -ldflags "-s -w -extldflags '-static'" -tags osusergo,netgo -o /usr
 
 FROM alpine
 RUN apk add bash curl fuse sqlite tzdata
+ENV TZ=Asia/Shanghai
 
 COPY --from=builder /usr/local/bin/read-track /usr/local/bin/read-track
 

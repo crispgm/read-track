@@ -37,7 +37,7 @@ func (app Application) List(c *gin.Context) {
 		return
 	}
 	for i, a := range articles {
-		articles[i].CreatedAtText = a.CreatedAt.Format("2006-01-02 15:04")
+		articles[i].CreatedAtText = a.CreatedAt.In(app.loc).Format("2006-01-02 15:04")
 		desc := []rune(a.Description)
 		if len(desc) > 140 {
 			desc = desc[0:140]
