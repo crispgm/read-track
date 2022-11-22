@@ -94,29 +94,23 @@ type ArticleStatResult struct {
 // GetArticleStatistics .
 func GetArticleStatistics(db *gorm.DB, loc *time.Location) ([]ArticleStat, error) {
 	now := time.Now()
-	year, month, day := now.Year(), now.Month(), now.Day()
-	var fromTime, toTime time.Time
 
 	// today
-	fromTime = time.Date(year, time.Month(month), day, 0, 0, 0, 0, loc)
-	toTime = fromTime.AddDate(0, 0, 1).Add(time.Second * -1)
-	today, err := getArticleStatistics(db, "Today", fromTime, toTime)
+	today, err := getArticleStatistics(db, "Today", "%Y-%m-%d", now.Format("2006-01-02"))
 
 	// this month
-	fromTime = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, loc)
-	toTime = fromTime.AddDate(0, 1, 0).Add(time.Second * -1)
-	thisMonth, err := getArticleStatistics(db, "This Month", fromTime, toTime)
+	thisMonth, err := getArticleStatistics(db, "This Month", "%Y-%m", now.Format("2006-01"))
 
 	stats := []ArticleStat{today, thisMonth}
 	return stats, err
 }
 
-func getArticleStatistics(db *gorm.DB, name string, fromTime, toTime time.Time) (ArticleStat, error) {
+func getArticleStatistics(db *gorm.DB, name string, dateFormat, dateCondition string) (ArticleStat, error) {
 	var result []ArticleStatResult
 	err := db.
 		Table("Articles").
 		Select("read_type", "count(id) AS read_count").
-		Where("created_at BETWEEN (? AND ?) AND status = ?", fromTime, toTime, StatusOK).
+		Where("strftime(?, created_at, 'localtime') = ? AND status = ?", dateFormat, dateCondition, StatusOK).
 		Group("read_type").
 		Scan(&result).
 		Error
