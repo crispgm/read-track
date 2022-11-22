@@ -1,32 +1,84 @@
-<h2 id="iOS">iOS</h2>
-<p>Coming soon.</p>
-<h2 id="Bookmarklet">Bookmarklet</h2>
-<p>
-  You may add the following bookmarklet to your browser. Chrome and Brave are
-  tested. This is based on
-  <a
-    href="https://gist.github.com/codemicro/f7d4d4b687c3ec2e7186ef7efecfcc35"
-    target="_blank"
-    >https://gist.github.com/codemicro/f7d4d4b687c3ec2e7186ef7efecfcc35</a
-  >.
-</p>
-<p>
-  Read Type:
-  <select>
-    <option>Read</option>
-    <option>Skim</option>
-    <option>Skip</option>
-  </select>
-</p>
-<p>
-  Enable HTTPS: <input type="checkbox" checked />
-</p>
-<pre class="highlight">
-  <code class="hljs">
-javascript:(() => {
-  const token = "{{ token }}";
-  const requestURL = `{{ hostname }}/api/add`;
-  const opType = "read";
+<div class="section">
+  <h2 id="Bookmarklet">Bookmarklet</h2>
+  <p>
+    <blockquote>
+    You may add the following bookmarklet to your browser. Chrome and Brave are
+    tested. This is based on
+    <a
+      href="https://gist.github.com/codemicro/f7d4d4b687c3ec2e7186ef7efecfcc35"
+      target="_blank"
+      >https://gist.github.com/codemicro/f7d4d4b687c3ec2e7186ef7efecfcc35</a
+    >.
+    </blockquote>
+  </p>
+  <p>
+    Read Type:
+    <select id="read-type" onchange="onSelectReadType()">
+      <option value="read">Read</option>
+      <option value="skim">Skim</option>
+      <option value="skip">Skip</option>
+    </select>
+  </p>
+  <p>Enable HTTPS: <input type="checkbox" checked onclick="onClickHTTPS(this);" /></p>
+  <p>
+    <button onclick="onClickCopy()">Copy to Clipboard</button>
+    <span id="copy-result"></span>
+  </p>
+  <pre class="highlight"><code class="hljs">loading...</code></pre>
+</div>
+<div class="section">
+  <h2 id="iOS">iOS</h2>
+  <p>Coming soon.</p>
+</div>
+<div class="section">
+  <h2 id="Android">Android</h2>
+  <p>Coming soon.</p>
+</div>
+<script>
+const token = "{{ token }}";
+const hostname = "{{ hostname }}";
+let readType = "read";
+let isHTTPS = true;
+setCode(token, hostname, readType, isHTTPS);
+
+function onSelectReadType() {
+  const readType = document.getElementById("read-type").value;
+  setCode(token, hostname, readType, isHTTPS);
+}
+
+function onClickHTTPS(cb) {
+  if (cb.checked == isHTTPS) {
+    return
+  }
+  isHTTPS = cb.checked;
+  setCode(token, hostname, readType, isHTTPS);
+}
+
+function onClickCopy() {
+  let bookmarklet = getBookmarklet(token, hostname, readType, isHTTPS);
+  navigator.clipboard.writeText(bookmarklet);
+  document.getElementById("copy-result").innerHTML = "Copied to clipboard. You may paste it to your bookmarklet."
+  setTimeout(() => {
+    document.getElementById("copy-result").innerHTML = "";
+  }, "2500")
+}
+
+function setCode(token, hostname, readType, isHTTPS) {
+  let bookmarklet = getBookmarklet(token, hostname, readType, isHTTPS);
+  const codeElement = document.getElementsByTagName('code')[0];
+  codeElement.innerHTML = bookmarklet;
+  hljs.highlightAll()
+}
+
+function getBookmarklet(token, hostname, readType, isHTTPS) {
+  let hostWithProto = "https://" + hostname;
+  if (!isHTTPS) {
+    hostWithProto = "http://" + hostname;
+  }
+  return `javascript:(() => {
+  const token = "${token}";
+  const requestURL = "${hostWithProto}/api/add";
+  const readType = "${readType}";
 
   const pageTitle = document.title;
   const pageURL = window.location.href;
@@ -88,13 +140,13 @@ javascript:(() => {
   const searchParams = url.searchParams;
   searchParams.set("title", pageTitle);
   searchParams.set("url", pageURL);
-  searchParams.set("type", opType);
+  searchParams.set("type", readType);
   searchParams.set("author", metaAuthor);
   searchParams.set("description", metaDescription);
   searchParams.set("image", metaImage);
   searchParams.set("token", token);
 
   window.location.href = url;
-})();
-  </code>
-</pre>
+})();`;
+}
+</script>

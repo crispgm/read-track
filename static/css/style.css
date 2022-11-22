@@ -87,6 +87,12 @@ img {
   }
 }
 
+blockquote {
+  border-left: 0.2rem solid #3bc9db;
+  margin-left: 0;
+  padding: 0.4rem 0.8rem;
+}
+
 .menu {
   margin-top: 0.8rem;
   text-align: left;
@@ -109,6 +115,20 @@ img {
 .article {
   margin-bottom: 2rem;
   text-align: left;
+}
+
+.page-title {
+  margin: 3rem 0 0;
+}
+
+.section {
+  margin: 3rem 0 0;
+}
+
+.footer {
+  border-top: 1px dotted;
+  padding: 1rem 0 2rem;
+  margin: 3rem 0 0;
 }
 
 .stat {

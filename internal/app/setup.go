@@ -1,8 +1,6 @@
 package app
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/osteele/liquid"
 )
@@ -16,7 +14,7 @@ func (app Application) Setup(c *gin.Context) {
 		"pageTitle": "Setup",
 		"highlight": true,
 
-		"hostname": fmt.Sprintf("https://%s", c.Request.Host),
+		"hostname": c.Request.Host,
 		"token":    app.conf.HTTP.AuthUser.Token,
 	})
 }
