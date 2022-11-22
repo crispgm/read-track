@@ -53,7 +53,7 @@ code {
 }
 
 pre.highlight {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 .wrapper {
@@ -100,7 +100,7 @@ blockquote {
 
 .menu-item {
   border-left: 1px solid;
-  padding: 0 0.4rem;
+  padding: 0 4px 0 6px;
 }
 
 .menu-active > a {
@@ -131,10 +131,59 @@ blockquote {
   margin: 3rem 0 0;
 }
 
+.article-item {
+  margin-top: 1rem;
+}
+
+.article-item:hover {
+  background-color: #c5f6fa;
+}
+
+.article-header {
+  display: flex;
+}
+
+.article-badge {
+  background-color: #99e9f2;
+  width: 40px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+}
+
+.article-time {
+  color: #15aabf;
+  float: right;
+  padding: .2rem 0 0;
+}
+
+.article-title {
+  float: right;
+  font-size: 1.2rem;
+  overflow-x: hidden;
+  padding: 0 0 0 0.4rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.article-description {
+  padding: 0.4rem 0 0;
+}
+
+.article-info {
+  color: #99e9f2;
+  padding: 0.4rem 0 0;
+}
+
+.article-tag {
+  background-color: #0b7285;
+  padding: 0 4px;
+}
+
 .stat {
   display: flex;
   font-size: 1rem;
-  justify-content: space-between;
+  justify-content: space-around;
   margin-bottom: 1rem;
   padding: 0.8rem 1.2rem 0;
   text-align: left;

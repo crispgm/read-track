@@ -12,7 +12,7 @@ type TrackParams struct {
 	Token       string `form:"token" binding:"required"`
 	Title       string `form:"title" binding:"required"`
 	URL         string `form:"url" binding:"required,url"`
-	Type        string `form:"type" binding:"required,oneof=read skip skim"`
+	Type        string `form:"type" binding:"required,oneof=read unread skip skim"`
 	Author      string `form:"author"`
 	Description string `form:"description"`
 	Image       string `form:"image"`

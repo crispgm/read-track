@@ -1,3 +1,4 @@
+// Package model .
 package model
 
 import (
@@ -11,9 +12,10 @@ import (
 
 // Read types
 const (
-	RTRead = "read"
-	RTSkim = "skim"
-	RTSkip = "skip"
+	RTRead   = "read"
+	RTUnread = "unread"
+	RTSkim   = "skim"
+	RTSkip   = "skip"
 
 	StatusOK = 0
 )
@@ -35,6 +37,44 @@ type Article struct {
 	ReadType    string       `gorm:"read_type;size:16;not null" json:"Type,omitempty"`
 	ReadAt      sql.NullTime `gorm:"read_at" json:"ReadAt,omitempty"`
 	Status      uint8        `gorm:"status;not null" json:"Status"`
+
+	CreatedAtText   string `gorm:"-" json:"CreatedAtText"`
+	DescriptionText string `gorm:"-" json:"DescriptionText"`
+}
+
+// CreateArticle .
+func CreateArticle(db *gorm.DB, a *Article) error {
+	urlp, err := url.Parse(a.URL)
+	if err != nil {
+		return err
+	}
+	a.Domain = urlp.Hostname()
+	a.ReadAt = sql.NullTime{Time: time.Now(), Valid: true}
+	var existed Article
+	err = db.Where("url = ? AND status = ?", a.URL, StatusOK).Take(&existed).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		a.Status = StatusOK
+		result := db.Create(a)
+		return result.Error
+	}
+
+	existed.ReadType = a.ReadType
+	existed.Title = a.Title
+	existed.Description = a.Description
+	existed.Author = a.Author
+	return db.Save(&existed).Error
+}
+
+// ListArticles .
+func ListArticles(db *gorm.DB, loc *time.Location, year, month int) ([]Article, error) {
+	var articles []Article
+	yearMonth := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, loc).Format("2006-01")
+	err := db.
+		Where("strftime('%Y-%m', created_at, 'localtime') = ? AND status = ?", yearMonth, StatusOK).
+		Order("created_at DESC").
+		Find(&articles).
+		Error
+	return articles, err
 }
 
 // ArticleExport for export
@@ -49,30 +89,15 @@ type ArticleExport struct {
 	ReadAt      *time.Time `yaml:"read_at"`
 }
 
-// CreateArticle .
-func CreateArticle(db *gorm.DB, a *Article) error {
-	urlp, err := url.Parse(a.URL)
-	if err != nil {
-		return err
-	}
-	a.Domain = urlp.Hostname()
-	a.ReadAt = sql.NullTime{Time: time.Now(), Valid: true}
-	err = db.Where("url = ? AND status = ?", a.URL, StatusOK).Take(&Article{}).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		a.Status = StatusOK
-		result := db.Create(a)
-		return result.Error
-	}
-
-	return ErrDuplicatedQuery
-}
-
 // ExportArticles .
 func ExportArticles(db *gorm.DB, loc *time.Location, year, month int) ([]Article, error) {
 	var articles []Article
-	fromTime := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, loc)
-	toTime := fromTime.AddDate(0, 1, 0).Add(time.Second * -1)
-	err := db.Where("created_at BETWEEN (? AND ?) AND status = ?", fromTime, toTime, StatusOK).Find(&articles).Error
+	yearMonth := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, loc).Format("2006-01")
+	err := db.
+		Where("strftime('%Y-%m', created_at, 'localtime')  = ? AND status = ?", yearMonth, StatusOK).
+		Order("created_at DESC").
+		Find(&articles).
+		Error
 	return articles, err
 }
 
