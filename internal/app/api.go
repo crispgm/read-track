@@ -15,7 +15,6 @@ type TrackParams struct {
 	Type        string `form:"type" binding:"required,oneof=read unread skip skim"`
 	Author      string `form:"author"`
 	Description string `form:"description"`
-	Image       string `form:"image"`
 }
 
 // Add implementation of adding an article
@@ -32,8 +31,8 @@ func (app Application) Add(c *gin.Context) {
 	article := &model.Article{
 		Title:       params.Title,
 		URL:         params.URL,
-		Description: params.Description,
-		Author:      params.Author,
+		Description: trimDefault(params.Description),
+		Author:      trimDefault(params.Author),
 		ReadType:    params.Type,
 	}
 	err = model.CreateArticle(app.DB(), article)
@@ -43,4 +42,11 @@ func (app Application) Add(c *gin.Context) {
 	}
 	resp.Data = article
 	c.JSON(http.StatusOK, resp)
+}
+
+func trimDefault(input string) string {
+	if input == "-" {
+		return ""
+	}
+	return input
 }
