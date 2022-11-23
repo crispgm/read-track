@@ -141,27 +141,34 @@ blockquote {
 
 .article-header {
   position: relative;
+  width: 100%;
 }
 
 .article-badge {
   background-color: #99e9f2;
   float: left;
   width: 40px;
-  height: 24px;
-  line-height: 24px;
-  margin-top: 2px;
+  height: 28px;
+  line-height: 28px;
+  overflow: hidden;
   text-align: center;
 }
 
 .article-title {
   font-size: 1.2rem;
-  padding: 0 0 0 0.4rem;
+  height: 28px;
+  line-height: 28px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .article-time {
   color: #15aabf;
-  float: right;
-  padding: 0.2rem 0 0;
+  height: 28px;
+  line-height: 28px;
+  /* float: right; */
+  padding: 0 0 0 0.4rem;
 }
 
 .article-description {
@@ -177,13 +184,6 @@ blockquote {
   background-color: #0b7285;
   overflow: hidden;
   padding: 0 4px;
-}
-
-@media screen and (max-width: 640px) {
-  .article-time {
-    float: none;
-    padding: 0 0 0.2rem;
-  }
 }
 
 .stat {
