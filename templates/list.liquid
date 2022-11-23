@@ -4,26 +4,26 @@
     <div class="article-header">
       <span class="article-badge">{{ a.ReadType }}</span>
       <span class="article-title">
-        <a title="{{ a.Title }}" href="{{ a.URL }}" target="_blank">{{ a.Title }}</a>
+        <a title="{{ a.Title }}" href="{{ a.URL }}" target="_blank"
+          >{{ a.Title }}</a
+        >
       </span>
     </div>
     <div class="article-info">
       <div class="article-time">{{ a.CreatedAtText }}</div>
       <div>
-      {% unless a.Domain == "" %}
-      <span class="article-tag">Host: {{ a.Domain }}</span>
-      {% endunless %} {% unless a.Author == "" %}
-      <span class="article-tag">Author: {{ a.Author }}</span>
-      {% endunless %}
+        {% unless a.Domain == "" %}
+        <span class="article-tag">Host: {{ a.Domain }}</span>
+        {% endunless %} {% unless a.Author == "" %}
+        <span class="article-tag">Author: {{ a.Author }}</span>
+        {% endunless %}
       </div>
     </div>
-    <div class="article-description">
-      {% unless a.Description == "" %}
-      <div class="article-footer-left" title="{{ a.Description }}">
-        {{ a.DescriptionText }}
-      </div>
-      {% endunless %}
+    {% unless a.Description == "" %}
+    <div class="article-description" title="{{ a.Description }}">
+      {{ a.DescriptionText }}
     </div>
+    {% endunless %}
   </div>
   {% endfor %}
 </div>

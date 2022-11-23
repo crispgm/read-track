@@ -42,6 +42,8 @@ func (app Application) List(c *gin.Context) {
 		if len(desc) > 140 {
 			desc = desc[0:140]
 			articles[i].DescriptionText = string(desc) + " ..."
+		} else {
+			articles[i].DescriptionText = a.Description
 		}
 	}
 	app.RenderHTML(c, "list.liquid", liquid.Bindings{
