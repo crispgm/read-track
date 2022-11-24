@@ -20,7 +20,10 @@
       <option value="unread">Unread</option>
     </select>
   </p>
-  <p>Enable HTTPS: <input type="checkbox" checked onclick="onClickHTTPS(this);" /></p>
+  <p>
+    Device: <input type="text" id="device-name" onchange="onChangeDevice()" />
+  </p>
+  <p>HTTPS: <input type="checkbox" checked onclick="onClickHTTPS(this)" /></p>
   <p>
     <button onclick="onClickCopy()">Copy to Clipboard</button>
     <span id="copy-result"></span>
@@ -51,12 +54,13 @@
 const token = "{{ token }}";
 const hostname = "{{ hostname }}";
 let readType = "read";
+let deviceName = "";
 let isHTTPS = true;
-setCode(token, hostname, readType, isHTTPS);
+setCode(token, hostname, readType, deviceName, isHTTPS);
 
 function onSelectReadType() {
-  const readType = document.getElementById("read-type").value;
-  setCode(token, hostname, readType, isHTTPS);
+  readType = document.getElementById("read-type").value;
+  setCode(token, hostname, readType, deviceName, isHTTPS);
 }
 
 function onClickHTTPS(cb) {
@@ -64,11 +68,16 @@ function onClickHTTPS(cb) {
     return
   }
   isHTTPS = cb.checked;
-  setCode(token, hostname, readType, isHTTPS);
+  setCode(token, hostname, readType, deviceName, isHTTPS);
+}
+
+function onChangeDevice() {
+  deviceName = document.getElementById("device-name").value;
+  setCode(token, hostname, readType, deviceName, isHTTPS);
 }
 
 function onClickCopy() {
-  let bookmarklet = getBookmarklet(token, hostname, readType, isHTTPS);
+  let bookmarklet = getBookmarklet(token, hostname, readType, deviceName, isHTTPS);
   navigator.clipboard.writeText(bookmarklet);
   document.getElementById("copy-result").innerHTML = "Copied to clipboard. You may paste it to your bookmarklet."
   setTimeout(() => {
@@ -76,22 +85,23 @@ function onClickCopy() {
   }, "2500")
 }
 
-function setCode(token, hostname, readType, isHTTPS) {
-  let bookmarklet = getBookmarklet(token, hostname, readType, isHTTPS);
+function setCode(token, hostname, readType, deviceName, isHTTPS) {
+  let bookmarklet = getBookmarklet(token, hostname, readType, deviceName, isHTTPS);
   const codeElement = document.getElementsByTagName('code')[0];
   codeElement.innerHTML = bookmarklet;
   hljs.highlightAll()
 }
 
-function getBookmarklet(token, hostname, readType, isHTTPS) {
+function getBookmarklet(token, hostname, readType, deviceName, isHTTPS) {
   let hostWithProto = "https://" + hostname;
   if (!isHTTPS) {
     hostWithProto = "http://" + hostname;
   }
   return `javascript:(() => {
   const token = "${token}";
-  const requestURL = "${hostWithProto}/api/add";
   const readType = "${readType}";
+  const deviceName = "${deviceName}";
+  const requestURL = "${hostWithProto}/api/add";
 
   const pageTitle = document.title;
   const pageURL = window.location.href;
@@ -145,9 +155,10 @@ function getBookmarklet(token, hostname, readType, isHTTPS) {
   const searchParams = url.searchParams;
   searchParams.set("title", pageTitle);
   searchParams.set("url", pageURL);
-  searchParams.set("type", readType);
   searchParams.set("author", metaAuthor);
   searchParams.set("description", metaDescription);
+  searchParams.set("type", readType);
+  searchParams.set("device", deviceName);
   searchParams.set("token", token);
 
   window.location.href = url;

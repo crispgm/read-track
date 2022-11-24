@@ -2,8 +2,8 @@
 package model
 
 import (
-	"database/sql"
 	"errors"
+	"html"
 	"net/url"
 	"time"
 
@@ -12,12 +12,10 @@ import (
 
 // Read types
 const (
-	RTRead   = "read"
-	RTUnread = "unread"
-	RTSkim   = "skim"
-	RTSkip   = "skip"
-
-	StatusOK = 0
+	RTRead   = "read"   // have read
+	RTSkim   = "skim"   // have skimmed
+	RTUnread = "unread" // unread: 1. from read to unread; 2. read it later
+	RTSkip   = "skip"   // skipped and will not read
 )
 
 // Model errors
@@ -29,16 +27,15 @@ var (
 type Article struct {
 	gorm.Model
 
-	Title       string       `gorm:"title;size:128;not null" json:"Title,omitempty" yaml:"title"`
-	URL         string       `gorm:"url;size:512;not null" json:"URL,omitempty"`
-	Domain      string       `gorm:"domain;index;size:256;not null" json:"Domain,omitempty"`
-	Author      string       `gorm:"author;index;size:128;not null" json:"Author,omitempty"`
-	Description string       `gorm:"description;size:256;not null" json:"Description,omitempty"`
-	ReadType    string       `gorm:"read_type;size:16;not null" json:"Type,omitempty"`
-	ReadAt      sql.NullTime `gorm:"read_at" json:"ReadAt,omitempty"`
-	Status      uint8        `gorm:"status;not null" json:"Status"`
+	ReadType    string `gorm:"read_type;size:16;not null" json:"Type,omitempty"`
+	Title       string `gorm:"title;size:128;not null" json:"Title,omitempty" yaml:"title"`
+	URL         string `gorm:"url;size:512;not null" json:"URL,omitempty"`
+	Domain      string `gorm:"domain;index;size:256;not null" json:"Domain,omitempty"`
+	Author      string `gorm:"author;index;size:128" json:"Author,omitempty"`
+	Description string `gorm:"description;size:256" json:"Description,omitempty"`
+	Device      string `gorm:"device;index;size:32" json:"Device,omitempty"`
 
-	CreatedAtText   string `gorm:"-" json:"CreatedAtText"`
+	ReadAtText      string `gorm:"-" json:"CreatedAtText"`
 	DescriptionText string `gorm:"-" json:"DescriptionText"`
 }
 
@@ -49,19 +46,18 @@ func CreateArticle(db *gorm.DB, a *Article) error {
 		return err
 	}
 	a.Domain = urlp.Hostname()
-	a.ReadAt = sql.NullTime{Time: time.Now(), Valid: true}
 	var existed Article
-	err = db.Where("url = ? AND status = ?", a.URL, StatusOK).Take(&existed).Error
+	err = db.Where("url = ?", a.URL).Take(&existed).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		a.Status = StatusOK
 		result := db.Create(a)
 		return result.Error
 	}
 
 	existed.ReadType = a.ReadType
-	existed.Title = a.Title
-	existed.Description = a.Description
-	existed.Author = a.Author
+	existed.Title = html.EscapeString(a.Title)
+	existed.Description = html.EscapeString(a.Description)
+	existed.Author = html.EscapeString(a.Author)
+	existed.Device = html.EscapeString(a.Device)
 	return db.Save(&existed).Error
 }
 
@@ -70,8 +66,8 @@ func ListArticles(db *gorm.DB, loc *time.Location, year, month int) ([]Article, 
 	var articles []Article
 	yearMonth := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, loc).Format("2006-01")
 	err := db.
-		Where("strftime('%Y-%m', created_at, 'localtime') = ? AND status = ?", yearMonth, StatusOK).
-		Order("created_at DESC").
+		Where("strftime('%Y-%m', updated_at, 'localtime') = ?", yearMonth).
+		Order("updated_at DESC").
 		Find(&articles).
 		Error
 	return articles, err
@@ -79,14 +75,15 @@ func ListArticles(db *gorm.DB, loc *time.Location, year, month int) ([]Article, 
 
 // ArticleExport for export
 type ArticleExport struct {
-	Title       string     `yaml:"title"`
-	URL         string     `yaml:"url"`
-	Domain      string     `yaml:"domain"`
-	Author      string     `yaml:"author,omitempty"`
-	Description string     `yaml:"description,omitempty"`
-	CreatedAt   time.Time  `yaml:"created_at"`
-	ReadType    string     `yaml:"read_type"`
-	ReadAt      *time.Time `yaml:"read_at"`
+	ReadType    string    `yaml:"read_type"`
+	Title       string    `yaml:"title"`
+	URL         string    `yaml:"url"`
+	Domain      string    `yaml:"domain"`
+	Author      string    `yaml:"author,omitempty"`
+	Description string    `yaml:"description,omitempty"`
+	Device      string    `yaml:"device,omitempty"`
+	CreatedAt   time.Time `yaml:"created_at"`
+	UpdatedAt   time.Time `yaml:"updated_at"`
 }
 
 // ExportArticles .
@@ -94,8 +91,8 @@ func ExportArticles(db *gorm.DB, loc *time.Location, year, month int) ([]Article
 	var articles []Article
 	yearMonth := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, loc).Format("2006-01")
 	err := db.
-		Where("strftime('%Y-%m', created_at, 'localtime')  = ? AND status = ?", yearMonth, StatusOK).
-		Order("created_at DESC").
+		Where("strftime('%Y-%m', updated_at, 'localtime')  = ?", yearMonth).
+		Order("updated_at DESC").
 		Find(&articles).
 		Error
 	return articles, err
@@ -135,7 +132,7 @@ func getArticleStatistics(db *gorm.DB, name string, dateFormat, dateCondition st
 	err := db.
 		Table("Articles").
 		Select("read_type", "count(id) AS read_count").
-		Where("strftime(?, created_at, 'localtime') = ? AND status = ?", dateFormat, dateCondition, StatusOK).
+		Where("strftime(?, updated_at, 'localtime') = ?", dateFormat, dateCondition).
 		Group("read_type").
 		Scan(&result).
 		Error

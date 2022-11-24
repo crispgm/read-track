@@ -60,16 +60,15 @@ func convertArticles(articles []model.Article) []model.ArticleExport {
 	var exportArticles []model.ArticleExport
 	for _, a := range articles {
 		article := model.ArticleExport{
+			ReadType:    a.ReadType,
 			Title:       a.Title,
 			URL:         a.URL,
 			Domain:      a.Domain,
 			Author:      a.Author,
 			Description: a.Description,
+			Device:      a.Device,
 			CreatedAt:   a.CreatedAt,
-			ReadType:    a.ReadType,
-		}
-		if a.ReadAt.Valid {
-			article.ReadAt = &a.ReadAt.Time
+			UpdatedAt:   a.UpdatedAt,
 		}
 		exportArticles = append(exportArticles, article)
 	}

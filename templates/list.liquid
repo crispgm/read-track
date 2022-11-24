@@ -3,7 +3,7 @@
   <div class="article-item">
     <div class="article-header">
       <span class="article-badge">{{ a.ReadType }}</span>
-      <span class="article-time">{{ a.CreatedAtText }}</span>
+      <span class="article-time">{{ a.ReadAtText }}</span>
     </div>
     <div class="article-title">
       <a title="{{ a.Title }}" href="{{ a.URL }}" target="_blank"
@@ -12,7 +12,9 @@
     </div>
     <div class="article-info">
       <div class="article-tags">
-        {% unless a.Domain == "" %}
+        {% unless a.Device == "" %}
+        <span class="article-tag">Device: {{ a.Device }}</span>
+        {% endunless %} {% unless a.Domain == "" %}
         <span class="article-tag">Host: {{ a.Domain }}</span>
         {% endunless %} {% unless a.Author == "" %}
         <span class="article-tag">Author: {{ a.Author }}</span>
