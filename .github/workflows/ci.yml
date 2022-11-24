@@ -30,10 +30,12 @@ jobs:
     - name: lint
       uses: morphy2k/revive-action@v2
 
-    # - name: test
-    #   run: ./script/test.sh
-    #
-    # - name: codecov
-    #   uses: codecov/codecov-action@v1
-    #   with:
-    #     token: ${{ secrets.CODECOV_TOKEN }}
+    - name: env
+      run: cp .env.example .env
+    - name: test
+      run: ./script/test.sh
+
+    - name: codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
