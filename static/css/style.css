@@ -145,13 +145,28 @@ blockquote {
 }
 
 .article-badge {
-  background-color: #99e9f2;
   float: left;
   width: 40px;
   height: 28px;
   line-height: 28px;
   overflow: hidden;
   text-align: center;
+}
+
+.article-badge-read {
+  background-color: #66d9e8;
+}
+
+.article-badge-skim {
+  background-color: #63e6be;
+}
+
+.article-badge-unread {
+  background-color: #74c0fc;
+}
+
+.article-badge-skip {
+  background-color: #dee2e6;
 }
 
 .article-title {

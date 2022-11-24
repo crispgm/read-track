@@ -2,7 +2,7 @@
   {% for a in articles %}
   <div class="article-item">
     <div class="article-header">
-      <span class="article-badge">{{ a.ReadType }}</span>
+      <span class="article-badge article-badge-{{ a.ReadType }}">{{ a.ReadType }}</span>
       <span class="article-time">{{ a.ReadAtText }}</span>
     </div>
     <div class="article-title">
