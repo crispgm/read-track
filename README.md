@@ -2,7 +2,7 @@
 
 [![build](https://github.com/crispgm/read-track/actions/workflows/ci.yml/badge.svg)](https://github.com/crispgm/read-track/actions/workflows/ci.yml)
 
-Personal reading list inspired by [blog post from Thomas Pain](https://www.tdpain.net/blog/a-year-of-reading).
+A minimal personal reading list inspired by [blog post from Thomas Pain](https://www.tdpain.net/blog/a-year-of-reading).
 
 You may deploy your own Read Track instance and track read from different devices.
 
