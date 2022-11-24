@@ -11,7 +11,6 @@ func (app Application) Setup(c *gin.Context) {
 		"layout":    "page",
 		"path":      "/page/setup",
 		"title":     "Setup",
-		"pageTitle": "Setup",
 		"highlight": true,
 
 		"hostname": c.Request.Host,

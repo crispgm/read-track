@@ -47,10 +47,9 @@ func (app Application) List(c *gin.Context) {
 		}
 	}
 	app.RenderHTML(c, "list.liquid", liquid.Bindings{
-		"layout":    "page",
-		"path":      "/page/list",
-		"title":     "List",
-		"pageTitle": "What I have read?",
-		"articles":  articles,
+		"layout":   "page",
+		"path":     "/page/list",
+		"title":    "List",
+		"articles": articles,
 	})
 }

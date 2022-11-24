@@ -14,14 +14,15 @@ func (app Application) Dashboard(c *gin.Context) {
 		errMsg = err.Error()
 	}
 	app.RenderHTML(c, "dashboard.liquid", liquid.Bindings{
-		"layout":    "page",
-		"path":      "/page/dashboard",
-		"title":     "Dashboard",
-		"pageTitle": "Dashboard",
+		"layout": "page",
+		"path":   "/page/dashboard",
+		"title":  "Dashboard",
 
 		"instance": app.conf.Instance,
 		"timezone": app.conf.Timezone,
+		"database": app.conf.DB.Name,
 		"username": app.conf.HTTP.AuthUser.Name,
+		"token":    app.conf.HTTP.AuthUser.Token,
 
 		"error": errMsg,
 		"stats": stats,

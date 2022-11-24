@@ -28,7 +28,10 @@ func main() {
 	}
 	conf := appl.Conf()
 	// auto migrate
-	appl.AutoMigrate()
+	err = appl.AutoMigrate()
+	if err != nil {
+		panic(err)
+	}
 	// register routers
 	r := gin.Default()
 	appl.LoadRoutes(r, conf)

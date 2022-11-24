@@ -8,9 +8,8 @@ import (
 // Index .
 func (app Application) Index(c *gin.Context) {
 	app.RenderHTML(c, "index.liquid", liquid.Bindings{
-		"layout":    "page",
-		"path":      "/index",
-		"title":     "Home",
-		"pageTitle": "Welcome to Read Track",
+		"layout": "page",
+		"path":   "/index",
+		"title":  "Home",
 	})
 }
