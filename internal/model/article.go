@@ -75,6 +75,7 @@ func ListArticles(db *gorm.DB, loc *time.Location, year, month int) ([]Article, 
 
 // ArticleExport for export
 type ArticleExport struct {
+	ID          uint      `yaml:"id"`
 	ReadType    string    `yaml:"read_type"`
 	Title       string    `yaml:"title"`
 	URL         string    `yaml:"url"`

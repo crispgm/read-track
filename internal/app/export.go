@@ -60,6 +60,7 @@ func convertArticles(articles []model.Article) []model.ArticleExport {
 	var exportArticles []model.ArticleExport
 	for _, a := range articles {
 		article := model.ArticleExport{
+			ID:          a.ID,
 			ReadType:    a.ReadType,
 			Title:       a.Title,
 			URL:         a.URL,

@@ -1,7 +1,7 @@
 <div class="section">
   {% for a in articles %}
   <div class="article-item">
-    <div class="article-header">
+    <div class="article-header" title="#{{ a.ID }}">
       <span class="article-badge article-badge-{{ a.ReadType }}">{{ a.ReadType }}</span>
       <span class="article-time">{{ a.ReadAtText }}</span>
     </div>
