@@ -1,7 +1,6 @@
 <div class="section">
   <h2 id="Bookmarklet">Bookmarklet</h2>
-  <p>
-    <blockquote>
+  <blockquote>
     You may add the following bookmarklet to your browser. Chrome and Brave are
     tested. This is based on
     <a
@@ -9,45 +8,58 @@
       target="_blank"
       >https://gist.github.com/codemicro/f7d4d4b687c3ec2e7186ef7efecfcc35</a
     >.
-    </blockquote>
-  </p>
-  <p>
-    Read Type:
-    <select id="read-type" onchange="onSelectReadType()">
-      <option value="read">Read</option>
-      <option value="skim">Skim</option>
-      <option value="skip">Skip</option>
-      <option value="unread">Unread</option>
-    </select>
-  </p>
-  <p>
-    Device: <input type="text" id="device-name" onchange="onChangeDevice()" />
-  </p>
-  <p>HTTPS: <input type="checkbox" checked onclick="onClickHTTPS(this)" /></p>
-  <p>
-    <button onclick="onClickCopy()">Copy to Clipboard</button>
-    <span id="copy-result"></span>
-  </p>
+  </blockquote>
+  <div clas="input-area">
+    <div class="input-item">
+      <div class="input-title">Read Type</div>
+      <select id="read-type" onchange="onSelectReadType()">
+        <option value="read">Read</option>
+        <option value="skim">Skim</option>
+        <option value="skip">Skip</option>
+        <option value="unread">Unread</option>
+      </select>
+    </div>
+    <div class="input-item">
+      <div class="input-title">Device</div>
+      <input type="text" id="device-name" onchange="onChangeDevice()" />
+    </div>
+    <div class="input-item">
+      <div class="input-title">HTTPS</div>
+      <input type="checkbox" checked onclick="onClickHTTPS(this)" />
+    </div>
+    <p>
+      <button onclick="onClickCopy()">Copy to Clipboard</button>
+      <span id="copy-result"></span>
+    </p>
+  </div>
   <pre class="highlight bookmarklet"><code class="hljs">loading...</code></pre>
 </div>
 <div class="section">
   <h2 id="iOS">iOS</h2>
   <ol>
     <li>
-      <a href="https://www.icloud.com/shortcuts/c3f9ca3719a8443ca512b10b11b4b875" target="_blank">
-        Download the template of ReadTrack shortcut
-      </a>.
+      <a
+        href="https://www.icloud.com/shortcuts/c3f9ca3719a8443ca512b10b11b4b875"
+        target="_blank"
+      >
+        Download the template of ReadTrack shortcut </a
+      >.
     </li>
     <li>
-      Clone the shortcut and use as your private one, because it needs private access token.
+      Clone the shortcut and use as your private one, because it needs private
+      access token.
     </li>
     <li>
-      Setup <code>token</code>, <code>hostname</code> and <code>deviceName</code>.
+      Setup <code>token</code>, <code>hostname</code> and
+      <code>deviceName</code>.
     </li>
   </ol>
 </div>
 <div class="section">
   <h2 id="Android">Android</h2>
-  <p>It is not supported yet because I don't really have an Android device. If you want to use Read Track on Android, please feel free to contribute.</p>
+  <p>
+    It is not supported yet because I don't really have an Android device. If
+    you want to use Read Track on Android, please feel free to contribute.
+  </p>
 </div>
 <script src="/public/static/js/setup.js"></script>

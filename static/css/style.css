@@ -237,3 +237,12 @@ blockquote {
   max-height: 240px;
   overflow: scroll;
 }
+
+.input-item{
+  display: flex;
+  padding: .2rem 0;
+}
+
+.input-title {
+  width: 6rem;
+}
