@@ -2,10 +2,7 @@
 <div class="section">
   <h2 id="statistics">Statistics</h2>
   {% if error == '' %} {% for item in stats %}
-  <h3>
-    {{ item.Name }} {% if item.Name == 'This Month' %}[<a href="/page/export?format=json">export</a>]{%
-    endif %}
-  </h3>
+  <h3>{{ item.Name }}</h3>
   <div class="stat">
     <div class="stat-item">
       <div class="stat-title">All</div>
@@ -24,6 +21,11 @@
       <div class="stat-data">{{ item.Skip }}</div>
     </div>
   </div>
+  <p>
+    {% if item.Name == 'This Month' %} Export data as
+    <a href="/page/export?format=json">JSON</a> or
+    <a href="/page/export?format=csv">CSV</a> format. {% endif %}
+  </p>
   {% endfor %} {% else %} {{ errMsg }} {% endif %}
 </div>
 <div class="section">
