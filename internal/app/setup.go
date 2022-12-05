@@ -12,6 +12,7 @@ func (app Application) Setup(c *gin.Context) {
 		"path":      "/page/setup",
 		"title":     "Setup",
 		"highlight": true,
+		"vue":       true,
 
 		"hostname": c.Request.Host,
 		"token":    app.conf.HTTP.AuthUser.Token,

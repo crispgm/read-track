@@ -1,18 +1,14 @@
-<div class="section">
+<div id="app" class="section">
   <h2 id="Bookmarklet">Bookmarklet</h2>
   <blockquote>
-    You may add the following bookmarklet to your browser. Chrome and Brave are
-    tested. This is based on
-    <a
-      href="https://gist.github.com/codemicro/f7d4d4b687c3ec2e7186ef7efecfcc35"
-      target="_blank"
-      >https://gist.github.com/codemicro/f7d4d4b687c3ec2e7186ef7efecfcc35</a
-    >.
+    You may add the following bookmarklet to your browser. Chrome, Brave, and Safari are
+    tested.
   </blockquote>
   <div clas="input-area">
+    {% raw %}
     <div class="input-item">
       <div class="input-title">Read Type</div>
-      <select id="read-type" onchange="onSelectReadType()">
+      <select id="read-type" v-model="readType">
         <option value="read">Read</option>
         <option value="skim">Skim</option>
         <option value="skip">Skip</option>
@@ -21,18 +17,80 @@
     </div>
     <div class="input-item">
       <div class="input-title">Device</div>
-      <input type="text" id="device-name" onchange="onChangeDevice()" />
+      <input type="text" id="device-name" v-model="deviceName" />
     </div>
     <div class="input-item">
       <div class="input-title">HTTPS</div>
-      <input type="checkbox" checked onclick="onClickHTTPS(this)" />
+      <input type="checkbox" checked v-model="isHTTPS" />
     </div>
     <p>
-      <button onclick="onClickCopy()">Copy to Clipboard</button>
-      <span id="copy-result"></span>
+      <button @click="onClickCopy">Copy to Clipboard</button>
+      <span id="copy-result">{{ copyResult }}</span>
     </p>
   </div>
-  <pre class="highlight bookmarklet"><code class="hljs">loading...</code></pre>
+  <pre class="highlight bookmarklet">
+    <code class="hljs" id="bookmarklet">javascript:(() => {
+  const token = "{{ token }}";
+  const readType = "{{ readType }}";
+  const deviceName = "{{ deviceName }}";
+  const requestURL = "{{ isHTTPS ? 'https://' : 'http://' }}{{ hostname }}/api/add";
+
+  const pageTitle = document.title;
+  const pageURL = window.location.href;
+  let metaAuthor = "";
+  let metaDescription = "";
+
+  function getMetaValue(propName) {
+    const x = document.getElementsByTagName("meta");
+    for (let i = 0; i < x.length; i++) {
+      const y = x[i];
+      let metaName;
+      if (y.attributes.property !== undefined) {
+        metaName = y.attributes.property.value;
+      }
+      if (y.attributes.name !== undefined) {
+        metaName = y.attributes.name.value;
+      }
+      if (metaName === undefined) {
+        continue;
+      }
+      if (metaName === propName) {
+        return y.attributes.content.value;
+      }
+    }
+    return undefined;
+  }
+  {
+    const author = getMetaValue("author");
+    if (author !== undefined) {
+      metaAuthor = author;
+    }
+  }
+  {
+    let desc = getMetaValue("og:description");
+    if (desc !== undefined) {
+      metaDescription = desc;
+    } else {
+      desc = getMetaValue("description");
+      if (desc !== undefined) {
+        metaDescription = desc;
+      }
+    }
+  }
+
+  const url = new URL(requestURL);
+  const searchParams = url.searchParams;
+  searchParams.set("title", pageTitle);
+  searchParams.set("url", pageURL);
+  searchParams.set("author", metaAuthor);
+  searchParams.set("description", metaDescription);
+  searchParams.set("type", readType);
+  searchParams.set("device", deviceName);
+  searchParams.set("token", token);
+  window.location.href = url;
+})();</code>
+  </pre>
+  {% endraw %}
 </div>
 <div class="section">
   <h2 id="iOS">iOS</h2>
@@ -63,117 +121,37 @@
   </p>
 </div>
 <script>
-const token = "{{ token }}";
-const hostname = "{{ hostname }}";
-let readType = "read";
-let deviceName = "";
-let isHTTPS = true;
-setCode(token, hostname, readType, deviceName, isHTTPS);
+  const {createApp} = Vue;
 
-function onSelectReadType() {
-  readType = document.getElementById("read-type").value;
-  setCode(token, hostname, readType, deviceName, isHTTPS);
-}
-
-function onClickHTTPS(cb) {
-  if (cb.checked == isHTTPS) {
-    return
-  }
-  isHTTPS = cb.checked;
-  setCode(token, hostname, readType, deviceName, isHTTPS);
-}
-
-function onChangeDevice() {
-  deviceName = document.getElementById("device-name").value;
-  setCode(token, hostname, readType, deviceName, isHTTPS);
-}
-
-function onClickCopy() {
-  let bookmarklet = getBookmarklet(token, hostname, readType, deviceName, isHTTPS);
-  navigator.clipboard.writeText(bookmarklet);
-  document.getElementById("copy-result").innerHTML = "Copied to clipboard. You may paste it to your bookmarklet."
-  setTimeout(() => {
-    document.getElementById("copy-result").innerHTML = "";
-  }, "2500")
-}
-
-function setCode(token, hostname, readType, deviceName, isHTTPS) {
-  let bookmarklet = getBookmarklet(token, hostname, readType, deviceName, isHTTPS);
-  const codeElement = document.getElementsByTagName('code')[0];
-  codeElement.innerHTML = bookmarklet;
-  hljs.highlightAll()
-}
-
-function getBookmarklet(token, hostname, readType, deviceName, isHTTPS) {
-  let hostWithProto = "https://" + hostname;
-  if (!isHTTPS) {
-    hostWithProto = "http://" + hostname;
-  }
-  return `javascript:(() => {
-  const token = "${token}";
-  const readType = "${readType}";
-  const deviceName = "${deviceName}";
-  const requestURL = "${hostWithProto}/api/add";
-
-  const pageTitle = document.title;
-  const pageURL = window.location.href;
-  let metaAuthor = "";
-  let metaDescription = "";
-
-  function getMetaValue(propName) {
-    const x = document.getElementsByTagName("meta");
-    for (let i = 0; i < x.length; i++) {
-      const y = x[i];
-
-      let metaName;
-      if (y.attributes.property !== undefined) {
-        metaName = y.attributes.property.value;
-      }
-      if (y.attributes.name !== undefined) {
-        metaName = y.attributes.name.value;
-      }
-
-      if (metaName === undefined) {
-        continue;
-      }
-
-      if (metaName === propName) {
-        return y.attributes.content.value;
-      }
-    }
-    return undefined;
-  }
-
-  {
-    const author = getMetaValue("author");
-    if (author !== undefined) {
-      metaAuthor = author;
-    }
-  }
-
-  {
-    let desc = getMetaValue("og:description");
-    if (desc !== undefined) {
-      metaDescription = desc;
-    } else {
-      desc = getMetaValue("description");
-      if (desc !== undefined) {
-        metaDescription = desc;
-      }
-    }
-  }
-
-  const url = new URL(requestURL);
-  const searchParams = url.searchParams;
-  searchParams.set("title", pageTitle);
-  searchParams.set("url", pageURL);
-  searchParams.set("author", metaAuthor);
-  searchParams.set("description", metaDescription);
-  searchParams.set("type", readType);
-  searchParams.set("device", deviceName);
-  searchParams.set("token", token);
-
-  window.location.href = url;
-})();`;
-}
+  createApp({
+    data() {
+      return {
+        token: '{{ token }}',
+        hostname: '{{ hostname }}',
+        readType: 'read',
+        deviceName: '',
+        isHTTPS: true,
+        bookmarklet: 'loading...',
+        copyResult: '',
+      };
+    },
+    mounted() {
+      this.bookmarklet = document.querySelector('#bookmarklet').textContent;
+      hljs.highlightAll();
+    },
+    updated() {
+      this.bookmarklet = document.querySelector('#bookmarklet').textContent;
+      hljs.highlightAll();
+    },
+    methods: {
+      onClickCopy() {
+        navigator.clipboard.writeText(this.bookmarklet);
+        this.copyResult =
+          'Copied to clipboard. You may paste it to your bookmarklet.';
+        setTimeout(() => {
+          this.copyResult = '';
+        }, '2500');
+      },
+    },
+  }).mount('#app');
 </script>
