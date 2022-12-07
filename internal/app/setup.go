@@ -15,6 +15,6 @@ func (app Application) Setup(c *gin.Context) {
 		"vue":       true,
 
 		"hostname": c.Request.Host,
-		"token":    app.conf.HTTP.AuthUser.Token,
+		"token":    app.conf.HTTP.Token,
 	})
 }

@@ -9,6 +9,7 @@ import (
 
 	"github.com/crispgm/read-track/internal/infra"
 	"github.com/crispgm/read-track/internal/model"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/osteele/liquid"
 	"gorm.io/gorm"
@@ -69,15 +70,6 @@ func (app Application) AutoMigrate() error {
 	return err
 }
 
-// CheckToken checks whether it's valid token
-func (app Application) CheckToken(token string) bool {
-	if token == app.conf.HTTP.AuthUser.Token {
-		return true
-	}
-
-	return false
-}
-
 func (app Application) getTemplate(template string) ([]byte, error) {
 	return os.ReadFile(fmt.Sprintf("%s/templates/%s", app.path, template))
 }
@@ -114,4 +106,32 @@ func (app Application) RenderHTML(c *gin.Context, template string, bindings liqu
 	}
 	c.Data(http.StatusOK, "text/html; charset=utf-8", content)
 	return err
+}
+
+// GetUserInfo .
+func (app Application) GetUserInfo(ctx *gin.Context) *model.User {
+	session := sessions.Default(ctx)
+	profile := session.Get("profile")
+	if profile != nil {
+		if info, ok := profile.(map[string]interface{}); ok {
+			user := &model.User{
+				Name:     info["name"].(string),
+				Nickname: info["nickname"].(string),
+				Picture:  info["picture"].(string),
+				Sub:      info["sub"].(string),
+			}
+			return user
+		}
+	}
+	return nil
+}
+
+// IsAuthenticated .
+func (app Application) IsAuthenticated(ctx *gin.Context) {
+	user := app.GetUserInfo(ctx)
+	if user == nil || user.Sub != app.Conf().Auth0.UserID {
+		ctx.Redirect(http.StatusSeeOther, "/login")
+	} else {
+		ctx.Next()
+	}
 }

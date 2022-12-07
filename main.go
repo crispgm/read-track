@@ -34,7 +34,10 @@ func main() {
 	}
 	// register routers
 	r := gin.Default()
-	appl.LoadRoutes(r, conf)
+	err = appl.LoadRoutes(r, conf)
+	if err != nil {
+		panic(err)
+	}
 	// run
 	r.Run(conf.HTTP.Port)
 }

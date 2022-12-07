@@ -29,12 +29,24 @@
   {% endfor %} {% else %} {{ errMsg }} {% endif %}
 </div>
 <div class="section">
-  <h2 id="status">Status</h2>
+  <h2 id="userinfo">User Info</h2>
+  <ul>
+    <li>Name: {{ username }} (<a href="#" onclick="logout()">logout</a>)</li>
+    <li>Access Token: {{ token }}</li>
+  </ul>
+</div>
+<div class="section">
+  <h2 id="status">Server Status</h2>
   <ul>
     <li>Instance: {{ instance }}</li>
     <li>Timezone: {{ timezone }}</li>
     <li>Database: {{ database }}</li>
-    <li>Username: {{ username }}</li>
-    <li>Access Token: {{ token }}</li>
   </ul>
 </div>
+
+<script>
+function logout() {
+  Cookies.remove('auth-session')
+  window.location.href = '/logout';
+}
+</script>

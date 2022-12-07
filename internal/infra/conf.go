@@ -1,18 +1,16 @@
 package infra
 
 import (
-	"errors"
 	"os"
-	"strings"
 
-	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
 // Conf configuration
 type Conf struct {
-	HTTP HTTPConf
-	DB   DBConf
+	HTTP  HTTPConf
+	DB    DBConf
+	Auth0 Auth0Conf
 
 	Timezone string
 	Mode     string
@@ -21,16 +19,8 @@ type Conf struct {
 
 // HTTPConf .
 type HTTPConf struct {
-	Port      string
-	BasicAuth string
-	AuthUser  AuthUser
-}
-
-// AuthUser .
-type AuthUser struct {
-	Name     string
-	Password string
-	Token    string
+	Port  string
+	Token string
 }
 
 // DBConf .
@@ -42,14 +32,23 @@ type DBConf struct {
 	Pass     string
 }
 
+// Auth0Conf .
+type Auth0Conf struct {
+	Domain       string
+	ClientID     string
+	ClientSecret string
+	CallbackURL  string
+	UserID       string
+}
+
 // LoadConf loads conf from environment variables or dotenv
 func LoadConf(path string) (*Conf, error) {
 	// try loading dotenv
 	_ = godotenv.Load(path + ".env")
 	conf := Conf{
 		HTTP: HTTPConf{
-			Port:      os.Getenv("HTTP_PORT"),
-			BasicAuth: os.Getenv("HTTP_BASIC_AUTH"),
+			Port:  os.Getenv("HTTP_PORT"),
+			Token: os.Getenv("HTTP_TOKEN"),
 		},
 		DB: DBConf{
 			Provider: os.Getenv("DB_PROVIDER"),
@@ -58,27 +57,19 @@ func LoadConf(path string) (*Conf, error) {
 			User:     os.Getenv("DB_USER"),
 			Pass:     os.Getenv("DB_PASS"),
 		},
+		Auth0: Auth0Conf{
+			Domain:       os.Getenv("AUTH0_DOMAIN"),
+			ClientID:     os.Getenv("AUTH0_CLIENT_ID"),
+			ClientSecret: os.Getenv("AUTH0_CLIENT_SECRET"),
+			CallbackURL:  os.Getenv("AUTH0_CALLBACK_URL"),
+			UserID:       os.Getenv("AUTH0_USER_ID"),
+		},
 
 		Instance: os.Getenv("INSTANCE"),
 		Mode:     os.Getenv("MODE"),
 		Timezone: os.Getenv("TIMEZONE"),
 	}
-	if len(conf.HTTP.BasicAuth) > 0 {
-		fields := strings.Split(conf.HTTP.BasicAuth, ":")
-		conf.HTTP.AuthUser.Name = fields[0]
-		conf.HTTP.AuthUser.Password = fields[1]
-		conf.HTTP.AuthUser.Token = fields[2]
-	} else {
-		return nil, errors.New("No basic auth users")
-	}
 	return &conf, nil
-}
-
-// AuthAccounts .
-func (c Conf) AuthAccounts() gin.Accounts {
-	return map[string]string{
-		c.HTTP.AuthUser.Name: c.HTTP.AuthUser.Password,
-	}
 }
 
 // IsDev .

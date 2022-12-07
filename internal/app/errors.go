@@ -11,7 +11,8 @@ const (
 
 // Definition of errors
 var (
-	ErrInvalidExportType = NewError(1001, errors.New("Invalid export type"))
+	ErrInvalidExportType  = NewError(1001, errors.New("Invalid export type"))
+	ErrInvalidAccessToken = NewError(1002, errors.New("Invalid access token"))
 )
 
 // Error .

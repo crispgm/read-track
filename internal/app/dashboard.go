@@ -13,6 +13,7 @@ func (app Application) Dashboard(c *gin.Context) {
 	if err != nil {
 		errMsg = err.Error()
 	}
+	user := app.GetUserInfo(c)
 	app.RenderHTML(c, "dashboard.liquid", liquid.Bindings{
 		"layout": "page",
 		"path":   "/page/dashboard",
@@ -21,8 +22,10 @@ func (app Application) Dashboard(c *gin.Context) {
 		"instance": app.conf.Instance,
 		"timezone": app.conf.Timezone,
 		"database": app.conf.DB.Name,
-		"username": app.conf.HTTP.AuthUser.Name,
-		"token":    app.conf.HTTP.AuthUser.Token,
+		"username": user.Name,
+		"nickname": user.Nickname,
+		"picture":  user.Picture,
+		"token":    app.conf.HTTP.Token,
 
 		"error": errMsg,
 		"stats": stats,
