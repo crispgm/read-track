@@ -31,6 +31,7 @@ func (app Application) Add(c *gin.Context) {
 
 	if params.Token != app.Conf().HTTP.Token {
 		c.JSON(http.StatusAccepted, ErrInvalidAccessToken.Response())
+		return
 	}
 
 	article := &model.Article{
