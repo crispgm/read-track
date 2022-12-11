@@ -24,7 +24,7 @@
   <p>
     {% if item.Name == 'This Month' %} Export data as
     <a href="/page/export?format=json">JSON</a> or
-    <a href="/page/export?format=csv">CSV</a> format. {% endif %}
+    <a href="/page/export?format=yaml">YAML</a> format. {% endif %}
   </p>
   {% endfor %} {% else %} {{ errMsg }} {% endif %}
 </div>
