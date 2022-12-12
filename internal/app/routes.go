@@ -44,9 +44,3 @@ func (app Application) LoadRoutes(r *gin.Engine, conf *infra.Conf) error {
 
 	return nil
 }
-
-func (app Application) validTokenMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Next()
-	}
-}

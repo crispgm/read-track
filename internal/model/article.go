@@ -47,18 +47,23 @@ func CreateArticle(db *gorm.DB, a *Article) error {
 		return err
 	}
 	a.Domain = urlp.Hostname()
+	a.Title = html.EscapeString(a.Title)
+	a.Description = html.EscapeString(a.Description)
+	a.Author = html.EscapeString(a.Author)
+	a.Device = html.EscapeString(a.Device)
 	var existed Article
 	err = db.Where("url = ?", a.URL).Take(&existed).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
+		// create
 		result := db.Create(a)
 		return result.Error
 	}
-
+	// update
 	existed.ReadType = a.ReadType
-	existed.Title = html.EscapeString(a.Title)
-	existed.Description = html.EscapeString(a.Description)
-	existed.Author = html.EscapeString(a.Author)
-	existed.Device = html.EscapeString(a.Device)
+	existed.Title = a.Title
+	existed.Description = a.Description
+	existed.Author = a.Author
+	existed.Device = a.Device
 	return db.Save(&existed).Error
 }
 
