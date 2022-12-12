@@ -3,6 +3,7 @@ package model
 
 import (
 	"errors"
+	"fmt"
 	"html"
 	"net/url"
 	"time"
@@ -108,35 +109,76 @@ type ArticleStat struct {
 	Skip int64
 }
 
+// ArticleRank .
+type ArticleRank struct {
+	Name   string
+	Result []ArticleRankResult
+}
+
 // ArticleStatResult .
 type ArticleStatResult struct {
 	ReadType  string
 	ReadCount int64
 }
 
-// GetArticleStatistics .
-func GetArticleStatistics(db *gorm.DB, loc *time.Location) ([]ArticleStat, error) {
-	now := time.Now()
-
-	// today
-	today, err := getArticleStatistics(db, "Today", "%Y-%m-%d", now.Format("2006-01-02"))
-
-	// this month
-	thisMonth, err := getArticleStatistics(db, "This Month", "%Y-%m", now.Format("2006-01"))
-
-	stats := []ArticleStat{today, thisMonth}
-	return stats, err
+// ArticleRankResult .
+type ArticleRankResult struct {
+	Domain    string
+	Device    string
+	ReadCount int64
 }
 
-func getArticleStatistics(db *gorm.DB, name string, dateFormat, dateCondition string) (ArticleStat, error) {
+// GetArticleStatistics .
+func GetArticleStatistics(db *gorm.DB, loc *time.Location) ([]ArticleStat, []ArticleRank, error) {
+	var (
+		today     = time.Now().Format("2006-01-02")
+		ymd       = "%Y-%m-%d"
+		thisMonth = time.Now().Format("2006-01")
+		ym        = "%Y-%m"
+	)
+
+	// today
+	todayData, err := getArticleStatistics(db, "Today", ymd, today)
+	if err != nil {
+		return nil, nil, err
+	}
+	// this month
+	thisMonthData, err := getArticleStatistics(db, "This Month", ym, thisMonth)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	stats := []ArticleStat{*todayData, *thisMonthData}
+
+	// rank by domain
+	thisMonthByDomain, err := getArticleRankings(db, "Domain", "domain", ym, thisMonth)
+	if err != nil {
+		return nil, nil, err
+	}
+	// rank by device
+	thisMonthByRank, err := getArticleRankings(db, "Device", "device", ym, thisMonth)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ranks := []ArticleRank{*thisMonthByDomain, *thisMonthByRank}
+
+	return stats, ranks, err
+}
+
+func getArticleStatistics(db *gorm.DB, name string, dateFormat, dateCondition string) (*ArticleStat, error) {
 	var result []ArticleStatResult
 	err := db.
 		Table("Articles").
 		Select("read_type", "count(id) AS read_count").
 		Where("strftime(?, updated_at, 'localtime') = ?", dateFormat, dateCondition).
 		Group("read_type").
+		Order("read_type DESC").
 		Scan(&result).
 		Error
+	if err != nil {
+		return nil, err
+	}
 
 	var stat ArticleStat
 	stat.Name = name
@@ -150,5 +192,33 @@ func getArticleStatistics(db *gorm.DB, name string, dateFormat, dateCondition st
 			stat.Skip = item.ReadCount
 		}
 	}
-	return stat, err
+	return &stat, err
+}
+
+func getArticleRankings(db *gorm.DB, name string, field string, dateFormat, dateCondition string) (*ArticleRank, error) {
+	var result []ArticleRankResult
+	err := db.
+		Table("Articles").
+		Select(field, "count(id) AS read_count").
+		Where("strftime(?, updated_at, 'localtime') = ? AND read_type IN('skim', 'read')", dateFormat, dateCondition).
+		Group(field).
+		Order(fmt.Sprintf("%s DESC", "read_count")).
+		Limit(20).
+		Scan(&result).
+		Error
+	if err != nil {
+		return nil, err
+	}
+
+	for i, res := range result {
+		if name == "Device" && res.Device == "" {
+			result[i].Device = "(Empty)"
+		}
+	}
+
+	rank := &ArticleRank{
+		Name:   name,
+		Result: result,
+	}
+	return rank, err
 }

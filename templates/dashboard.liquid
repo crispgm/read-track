@@ -21,12 +21,21 @@
       <div class="stat-data">{{ item.Skip }}</div>
     </div>
   </div>
+  {% endfor %} {% for rank in ranks %}
+  <h4>{{ rank.Name }}</h4>
+  {% for item in rank.Result %}
+  <div class="stat-rank">
+    <span class="stat-count" title="{{ item.ReadCount }}">{{ item.ReadCount }}</span> |
+    <span class="stat-value">{{ item.Domain }}{{ item.Device}}</span>
+  </div>
+  {% endfor %} {% endfor %} {% else %} {{ errMsg }} {% endif %}
+</div>
+<div class="section">
+  <h2 id="export">Export</h2>
   <p>
-    {% if item.Name == 'This Month' %} Export data as
-    <a href="/page/export?format=json">JSON</a> or
-    <a href="/page/export?format=yaml">YAML</a> format. {% endif %}
+    Download <a href="/page/export?format=json">JSON</a> or
+    <a href="/page/export?format=yaml">YAML</a>.
   </p>
-  {% endfor %} {% else %} {{ errMsg }} {% endif %}
 </div>
 <div class="section">
   <h2 id="userinfo">User Info</h2>
@@ -45,8 +54,8 @@
 </div>
 
 <script>
-function logout() {
-  Cookies.remove('auth-session')
-  window.location.href = '/logout';
-}
+  function logout() {
+    Cookies.remove('auth-session');
+    window.location.href = '/logout';
+  }
 </script>

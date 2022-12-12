@@ -233,14 +233,32 @@ blockquote {
   margin: 0.8rem 0 0;
 }
 
+.stat-rank {
+  display: flex;
+  margin: 0.4rem 0 0;
+}
+
+.stat-value {
+  padding: 0 0 0 0.4rem;
+}
+
+.stat-count {
+  overflow: hidden;
+  padding: 0 0.8rem 0;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 4.2rem;
+}
+
 .bookmarklet {
   max-height: 240px;
   overflow: scroll;
 }
 
-.input-item{
+.input-item {
   display: flex;
-  padding: .2rem 0;
+  padding: 0.2rem 0;
 }
 
 .input-title {

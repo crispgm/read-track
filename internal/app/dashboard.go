@@ -9,7 +9,7 @@ import (
 // Dashboard .
 func (app Application) Dashboard(c *gin.Context) {
 	errMsg := ""
-	stats, err := model.GetArticleStatistics(app.DB(), app.loc)
+	stats, ranks, err := model.GetArticleStatistics(app.DB(), app.loc)
 	if err != nil {
 		errMsg = err.Error()
 	}
@@ -29,5 +29,6 @@ func (app Application) Dashboard(c *gin.Context) {
 
 		"error": errMsg,
 		"stats": stats,
+		"ranks": ranks,
 	})
 }
