@@ -15,8 +15,9 @@ You may deploy your own Read Track instance and track read from different device
 
 ## Dev
 
-1. Setup `.env` according to `.env.example`. Make sure your `HTTP_BASIC_AUTH` and `DB_NAME` are correctly configured.
-2. Run (DB is auto migrated):
+1. Register an Auth0 account and create an application.
+2. Setup `.env` according to `.env.example`. Make sure all the env vars are ready.
+3. Run (DB is auto migrated):
    ```
    script/run.sh
    ```
