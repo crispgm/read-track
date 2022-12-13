@@ -10,8 +10,8 @@ You may deploy your own Read Track instance and track read from different device
 
 - Simple API Endpoints with easy-to-setup bookmarklet and iOS shortcut.
 - Multiple verb support: read, skim, unread, and skip.
-- HTTP Basic Auth single user system.
-- Admin Pages for Statistics.
+- Designated for single user with Auth0 login.
+- Dashboard with statistical data.
 
 ## Dev
 
@@ -46,7 +46,12 @@ We only support fly.io right now. And DB is stored in fly volumes.
 
 3. Setup secrets with `fly secrets`:
     ```shell
-    fly secrets set HTTP_BASIC_AUTH="your-secrets"
+    fly secrets set HTTP_TOKEN="your-secrets"
+    fly secrets set AUTH0_DOMAIN='YOUR_DOMAIN'
+    fly secrets set AUTH0_CLIENT_ID='YOUR_CLIENT_ID'
+    fly secrets set AUTH0_CLIENT_SECRET='YOUR_CLIENT_SECRET'
+    fly secrets set AUTH0_CALLBACK_URL='http://YOUR_DOMAIN/callback'
+    fly secrets set AUTH0_USER_ID='YOUR_USER_ID'
     ```
 
 3. Deploy:
