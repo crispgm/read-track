@@ -12,17 +12,20 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/osteele/liquid"
+	"github.com/rs/zerolog"
 	"gorm.io/gorm"
 )
 
 // Application globals
 type Application struct {
 	path string
-
 	conf *infra.Conf
 	db   *gorm.DB
+	loc  *time.Location
 
-	loc *time.Location
+	authenticator *infra.Authenticator
+
+	logger zerolog.Logger
 }
 
 // Init globals
@@ -33,6 +36,7 @@ func (app *Application) Init(workingPath string) error {
 	if err != nil {
 		return err
 	}
+
 	app.db, err = infra.LoadDB(app.conf.DB)
 	if err != nil {
 		return err
@@ -43,8 +47,16 @@ func (app *Application) Init(workingPath string) error {
 		return err
 	}
 
+	app.authenticator, err = infra.InitAuthenticator(app.Conf().Auth0)
+	if err != nil {
+		return err
+	}
+
 	if !app.conf.IsDev() {
+		app.logger = zerolog.New(os.Stderr).Level(zerolog.InfoLevel).With().Timestamp().Logger()
 		gin.SetMode(gin.ReleaseMode)
+	} else {
+		app.logger = zerolog.New(os.Stderr).Level(zerolog.DebugLevel).With().Timestamp().Logger()
 	}
 	return nil
 }

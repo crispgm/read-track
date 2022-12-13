@@ -26,7 +26,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	conf := appl.Conf()
 	// auto migrate
 	err = appl.AutoMigrate()
 	if err != nil {
@@ -34,10 +33,10 @@ func main() {
 	}
 	// register routers
 	r := gin.Default()
-	err = appl.LoadRoutes(r, conf)
+	err = appl.LoadRoutes(r)
 	if err != nil {
 		panic(err)
 	}
 	// run
-	r.Run(conf.HTTP.Port)
+	r.Run(appl.Conf().HTTP.Port)
 }

@@ -5,24 +5,26 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/crispgm/read-track/internal/infra"
+	"github.com/gin-contrib/logger"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 )
 
 // LoadRoutes .
-func (app Application) LoadRoutes(r *gin.Engine, conf *infra.Conf) error {
+func (app Application) LoadRoutes(r *gin.Engine) error {
+	// logger
+	r.Use(logger.SetLogger())
+
+	// auth
 	gob.Register(map[string]interface{}{})
 	store := cookie.NewStore([]byte("secret"))
 	r.Use(sessions.Sessions("auth-session", store))
 
-	auth, err := infra.InitAuthenticator(app.Conf().Auth0)
-	if err != nil {
-		return err
-	}
-
+	// static
 	r.StaticFS("/public/static", http.Dir(fmt.Sprintf("%s/%s", app.path, "static")))
+
+	// index
 	r.GET("/", app.Index)
 
 	api := r.Group("/api")
@@ -38,8 +40,8 @@ func (app Application) LoadRoutes(r *gin.Engine, conf *infra.Conf) error {
 		page.GET("/export", app.Export)
 	}
 
-	r.GET("/login", Login(auth))
-	r.GET("/callback", Callback(auth))
+	r.GET("/login", Login(app.authenticator))
+	r.GET("/callback", Callback(app.authenticator))
 	r.GET("/logout", app.Logout)
 
 	return nil
