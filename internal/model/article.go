@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html"
 	"net/url"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -135,11 +136,13 @@ type ArticleRankResult struct {
 }
 
 // GetArticleStatistics .
-func GetArticleStatistics(db *gorm.DB, loc *time.Location) ([]ArticleStat, []ArticleRank, error) {
+func GetArticleStatistics(db *gorm.DB, loc *time.Location, date time.Time) (
+	[]ArticleStat, []ArticleRank, error,
+) {
 	var (
-		today     = time.Now().Format("2006-01-02")
+		today     = date.Format("2006-01-02")
 		ymd       = "%Y-%m-%d"
-		thisMonth = time.Now().Format("2006-01")
+		thisMonth = date.Format("2006-01")
 		ym        = "%Y-%m"
 	)
 
@@ -219,7 +222,7 @@ func getArticleRankings(db *gorm.DB, name string, field string, dateFormat, date
 	var cnt int
 	err = db.
 		Table("Articles").
-		Select("count(distinct(domain)) AS cnt").
+		Select("count(distinct(?)) AS cnt", strings.ToLower(name)).
 		Where("strftime(?, updated_at, 'localtime') = ? AND read_type IN('skim', 'read')", dateFormat, dateCondition).
 		Scan(&cnt).
 		Error
