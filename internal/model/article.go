@@ -117,6 +117,7 @@ type ArticleStat struct {
 // ArticleRank .
 type ArticleRank struct {
 	Name   string
+	Count  int
 	Result []ArticleRankResult
 }
 
@@ -215,6 +216,17 @@ func getArticleRankings(db *gorm.DB, name string, field string, dateFormat, date
 		return nil, err
 	}
 
+	var cnt int
+	err = db.
+		Table("Articles").
+		Select("count(distinct(domain)) AS cnt").
+		Where("strftime(?, updated_at, 'localtime') = ? AND read_type IN('skim', 'read')", dateFormat, dateCondition).
+		Scan(&cnt).
+		Error
+	if err != nil {
+		return nil, err
+	}
+
 	for i, res := range result {
 		if name == "Device" && res.Device == "" {
 			result[i].Device = "(Empty)"
@@ -223,6 +235,7 @@ func getArticleRankings(db *gorm.DB, name string, field string, dateFormat, date
 
 	rank := &ArticleRank{
 		Name:   name,
+		Count:  cnt,
 		Result: result,
 	}
 	return rank, err
