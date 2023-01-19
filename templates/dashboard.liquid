@@ -22,10 +22,13 @@
     </div>
   </div>
   {% endfor %} {% for rank in ranks %}
-  <h4>{{ rank.Name }} {% if rank.Count > 0 %}({{ rank.Count}}){% endif %}</h4>
+  <h4>{{ rank.Name }} {% if rank.Count > 0 %}({{ rank.Count }}){% endif %}</h4>
   {% for item in rank.Result %}
   <div class="stat-rank">
-    <span class="stat-count" title="{{ item.ReadCount }}">{{ item.ReadCount }}</span> |
+    <span class="stat-count" title="{{ item.ReadCount }}"
+      >{{ item.ReadCount }}</span
+    >
+    |
     <span class="stat-value">{{ item.Domain }}{{ item.Device}}</span>
   </div>
   {% endfor %} {% endfor %} {% else %} {{ errMsg }} {% endif %}

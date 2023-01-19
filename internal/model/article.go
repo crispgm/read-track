@@ -118,7 +118,7 @@ type ArticleStat struct {
 // ArticleRank .
 type ArticleRank struct {
 	Name   string
-	Count  int
+	Count  int64
 	Result []ArticleRankResult
 }
 
@@ -165,12 +165,12 @@ func GetArticleStatistics(db *gorm.DB, loc *time.Location, date time.Time) (
 		return nil, nil, err
 	}
 	// rank by device
-	thisMonthByRank, err := getArticleRankings(db, "Device", "device", ym, thisMonth)
+	thisMonthByDevice, err := getArticleRankings(db, "Device", "device", ym, thisMonth)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	ranks := []ArticleRank{*thisMonthByDomain, *thisMonthByRank}
+	ranks := []ArticleRank{*thisMonthByDomain, *thisMonthByDevice}
 
 	return stats, ranks, err
 }
@@ -212,19 +212,8 @@ func getArticleRankings(db *gorm.DB, name string, field string, dateFormat, date
 		Where("strftime(?, updated_at, 'localtime') = ? AND read_type IN('skim', 'read')", dateFormat, dateCondition).
 		Group(field).
 		Order(fmt.Sprintf("%s DESC", "read_count")).
-		Limit(20).
+		Limit(10).
 		Scan(&result).
-		Error
-	if err != nil {
-		return nil, err
-	}
-
-	var cnt int
-	err = db.
-		Table("Articles").
-		Select("count(distinct(?)) AS cnt", strings.ToLower(name)).
-		Where("strftime(?, updated_at, 'localtime') = ? AND read_type IN('skim', 'read')", dateFormat, dateCondition).
-		Scan(&cnt).
 		Error
 	if err != nil {
 		return nil, err
@@ -234,6 +223,17 @@ func getArticleRankings(db *gorm.DB, name string, field string, dateFormat, date
 		if name == "Device" && res.Device == "" {
 			result[i].Device = "(Empty)"
 		}
+	}
+
+	var cnt int64
+	err = db.
+		Model(&Article{}).
+		Distinct(strings.ToLower(name)).
+		Where("strftime(?, updated_at, 'localtime') = ? AND read_type IN('skim', 'read')", dateFormat, dateCondition).
+		Count(&cnt).
+		Error
+	if err != nil {
+		return nil, err
 	}
 
 	rank := &ArticleRank{
